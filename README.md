@@ -117,7 +117,7 @@ This extension requests the following permissions:
 
 ## 🤝 Contributing
 
-Contributions are welcome! If you have ideas for improvements 💡, find bugs 🐞, or are interested in helping bring support to other browsers (like Chrome), please feel free to open an issue or submit a pull request on the [GitHub repository 🐙🐱](https://github.com/Matrixpro/matrix-ai-prompt-architect-firefox.git)
+Contributions are welcome! If you have ideas for improvements 💡, find bugs 🐞, or are interested in helping bring support to other browsers (like Chrome), please feel free to open an issue or submit a pull request on the [GitHub repository 🐙🐱](https://github.com/LostInMatrix/matrix-ai-prompt-architect-firefox?tab=readme-ov-file)
 
 ## 📜 License
 
