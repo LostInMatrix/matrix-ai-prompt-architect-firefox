@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>AI Prompt Helper Options</title>
+    <link rel="stylesheet" href="options.css">
+</head>
+<body>
+<div id="alert-container" class="alert-container"></div>
+<div class="container">
+    <h1>AI Prompt Helper Options</h1>
+
+    <div class="section">
+        <h2>Manage Categories & Phrases</h2>
+
+        <div class="action-button-row">
+            <button id="createCategoryBtn" class="action-button"><span class="icon">+</span> New Category</button>
+            <button id="addPhraseBtn" class="action-button"><span class="icon">+</span> New Phrase</button>
+            <button id="exportPhrasesBtn" class="action-button"><span class="icon">↓</span> Export</button>
+        </div>
+
+        <div id="categoryTabsContainer" class="category-tabs-container">
+        </div>
+
+        <div id="categoryPanelsContainer" class="category-panels-container">
+        </div>
+
+        <div id="phraseStatusMessage" class="status-message"></div>
+    </div>
+
+    <!--<div class="section">-->
+    <!--    <h2>Hotkeys</h2>-->
+    <!--    <div class="option">-->
+    <!--        <p>The extension uses Ctrl+Alt+1 through Ctrl+Alt+9 for quick insertion of phrases.</p>-->
+    <!--        <p class="description">These hotkeys can be used when focused in any text field on supported sites.</p>-->
+    <!--    </div>-->
+    <!--</div>-->
+
+    <!--<div class="actions">-->
+    <!--    <div id="status"></div>-->
+    <!--    <button id="save">Save Settings</button>-->
+    <!--</div>-->
+</div>
+
+<div id="slidePanel" class="slide-panel">
+    <div class="slide-panel-header">
+        <h3 id="slidePanelTitle">Add New Phrase</h3>
+        <button id="closePanelBtn" class="close-panel-btn">×</button>
+    </div>
+    <div class="slide-panel-content">
+        <form id="addCustomPhraseForm" class="phrase-form">
+            <h4>Add/Edit Custom Phrase</h4>
+            <div class="form-group" style="display: none;">
+                <label for="phraseId">Phrase ID:</label>
+                <input type="text" id="phraseId" placeholder="auto-generated from label">
+            </div>
+            <div class="form-group">
+                <label for="phraseCategorySelect">Category:</label>
+                <select id="phraseCategorySelect" required>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="phraseLabel">Button Label:</label>
+                <input type="text" id="phraseLabel" placeholder="Text shown on button" required>
+            </div>
+            <div class="form-group">
+                <label for="phraseContent">Phrase Content:</label>
+                <textarea id="phraseContent" rows="5" placeholder="Content to insert when button is clicked"
+                          required></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" id="addPhraseButton">Add Phrase</button>
+                <button type="button" id="cancelButton">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="panelOverlay" class="panel-overlay"></div>
+<script src="alerts.js"></script>
+<script src="../data/phrases/adaptive.js"></script>
+<script src="../data/phrases/coding.js"></script>
+<script src="../data/phrases/critic.js"></script>
+<script src="../data/phrases/devin.js"></script>
+<script src="../data/phrases/expert.js"></script>
+<script src="../data/phrases/writing.js"></script>
+<script src="../lib/phrases.js"></script>
+<script src="../lib/storage.js"></script>
+<script src="options.js"></script>
+<script src="phraseManager.js"></script>
+</body>
+</html>
