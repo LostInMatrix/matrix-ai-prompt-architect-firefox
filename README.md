@@ -10,7 +10,7 @@
 
 ## 🦊 Installation (Firefox)
 
-1.  Install directly from the [Mozilla Add-ons page for AI Prompt Helper](https://github.com/LostInMatrix/matrix-ai-prompt-architect-firefox).
+1.  Install directly from the [Mozilla Add-ons page for AI Prompt Helper](https://addons.mozilla.org/addon/matrix-ai-prompt-architect/).
 2.  Once installed, the AI Prompt Helper icon will appear in your Firefox toolbar.
 
 *(TODO: Chrome/Chromium support is not currently available but could be a future enhancement. Contributions welcome!)*
