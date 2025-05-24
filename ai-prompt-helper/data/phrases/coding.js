@@ -33,6 +33,11 @@ window.aiPromptHelper._phraseModules.coding = {
     generateSummary: "Generate an exhaustive and meticulous report of our discussion up to this point.",
     summarizeForContext: "Include the initial goals, key topics discussed, significant decisions made, code implemented (if any), outstanding questions, and the current objective. This report should serve as a self-contained context document suitable for resuming the conversation from scratch.",
 
+    // Guide the AI on how to read the summary/report
+    reportInterpretation: "This is a STATUS REPORT documenting completed work, not a requirements document. When you see 'implementation phase pending,' this means implementing USAGE of already-completed structural changes, not creating the changes themselves.",
+    reconciliationGuidance: "When report content conflicts with provided code files, treat the code as ground truth. The report may reflect an earlier state or use imprecise status language.",
+    resumptionContext: "Treat this as a HANDOFF document showing accomplished work and the immediate next actionable step, not a project plan for future work.",
+
     // --- Code Style & Implementation ---
     minimalist: "Provide the most minimalist implementation satisfying requirements. Avoid over-engineering.",
     addDebugCode: "Insert relevant debug code (logging, etc.) to diagnose the issue.",

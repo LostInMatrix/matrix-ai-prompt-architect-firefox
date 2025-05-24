@@ -30,7 +30,7 @@ function loadInitialData() {
     }
 }
 
-function displayButtonGroup(buttons, statuses, isSystemInstruction, container) {
+function displayButtonGroup(buttons, statuses, container) {
     buttons.forEach(button => {
         const enabled = statuses[button.label] !== false;
 
@@ -45,10 +45,10 @@ function displayButtonGroup(buttons, statuses, isSystemInstruction, container) {
         badgeColumn.className = 'column column-badge';
         const badge = document.createElement('span');
         badge.className = 'badge';
-        if (isSystemInstruction) {
+        if (button.type === 'system') {
             badge.classList.add('system');
             badge.textContent = 'system';
-        } else if (button.atomicPhraseIds && button.atomicPhraseIds.length > 1) {
+        } else if (button.type === 'workflow') {
             badge.classList.add('workflow');
             badge.textContent = 'workflow';
         } else {
@@ -570,9 +570,6 @@ function getUsedAtomicPhraseIds() {
     (phrasesDef.buttonDefinitions || []).forEach(button => {
         button.atomicPhraseIds?.forEach(id => usedIds.add(id));
     });
-    (phrasesDef.systemInstructionButtons || []).forEach(button => {
-        button.atomicPhraseIds?.forEach(id => usedIds.add(id));
-    });
     return usedIds;
 }
 
@@ -620,11 +617,11 @@ async function renderPanelContent(categoryId, panelElement = null) {
     try {
         const result = await browser.storage.local.get('aiPromptHelperCategories');
         const userCategories = result.aiPromptHelperCategories || {};
-        const isUserCategory = userCategories[categoryId] ? true : false;
+        const isUserCategory = !!userCategories[categoryId];
 
         const phrasesDef = window.aiPromptHelper?.phrases || {};
-        const defaultButtonDefinitions = phrasesDef.buttonDefinitions || [];
-        const systemInstructionButtonDefinitions = phrasesDef.systemInstructionButtons || [];
+        const defaultButtonDefinitions = (phrasesDef.buttonDefinitions || []).filter(btn => btn.type !== 'system');
+        const systemInstructionButtonDefinitions = (phrasesDef.buttonDefinitions || []).filter(btn => btn.type === 'system');
         const allAtomicPhrases = phrasesDef.atomicPhrases || {};
 
         const buttonData = await browser.storage.local.get({
@@ -652,14 +649,14 @@ async function renderPanelContent(categoryId, panelElement = null) {
 
         let usedAtomicIds = new Set();
 
-        const createSection = (title, items, displayFunc, isSystem = false) => {
+        const createSection = (title, items, displayFunc) => {
             if (items.length > 0) {
                 const header = document.createElement('h4');
                 header.textContent = title;
                 panel.appendChild(header);
                 const listContainer = document.createElement('div');
                 listContainer.className = 'phrases-list';
-                displayFunc(items, buttonStatuses, isSystem, listContainer);
+                displayFunc(items, buttonStatuses, listContainer);
                 panel.appendChild(listContainer);
                 items.forEach(btn => btn.atomicPhraseIds?.forEach(id => usedAtomicIds.add(id)));
             }
@@ -687,8 +684,8 @@ async function renderPanelContent(categoryId, panelElement = null) {
                 return obj;
             }, {});
 
-        createSection('Default Buttons', categoryDefaultButtons, displayButtonGroup, false);
-        createSection('System Instruction Buttons', categorySystemButtons, displayButtonGroup, true);
+        createSection('Default Buttons', categoryDefaultButtons, displayButtonGroup);
+        createSection('System Instruction Buttons', categorySystemButtons, displayButtonGroup);
         createCustomSection('Custom Phrases', categoryCustomPhrases, displayCustomPhrases);
 
         if (usedAtomicIds.size > 0) {
@@ -1138,8 +1135,8 @@ function exportPhrasesFromPanel(categoryId, categoryName) {
         const customPhrases = result[STORAGE_KEY_CUSTOM_PHRASES] || {};
         const phrasesDef = window.aiPromptHelper?.phrases || {};
         const defaultAtomicPhrases = phrasesDef.atomicPhrases || {};
-        const defaultButtons = phrasesDef.buttonDefinitions || [];
-        const systemButtons = phrasesDef.systemInstructionButtons || [];
+        const defaultButtons = (phrasesDef.buttonDefinitions || []).filter(btn => btn.type !== 'system');
+        const systemButtons = (phrasesDef.buttonDefinitions || []).filter(btn => btn.type === 'system');
 
         const exportedAtomicOverrides = {};
         const exportedReferencedAtomics = {};

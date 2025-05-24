@@ -37,27 +37,40 @@ if (!window.aiPromptHelper.phrases) {
     window.aiPromptHelper.phrases = {
         atomicPhrases: allAtomicPhrases,
         buttonDefinitions: [
-            // --- Top 1-9 will be hot-keyed, Multiple values = workflow ---
+            //== CODING: Workflows ==//
             {
                 label: "Discovery",
+                type: "workflow",
                 atomicPhraseIds: ["discussPlan", "askMissingInfo", "askClarify"],
                 categoryId: "coding"
             },
             {
                 label: "Improve Code",
+                type: "workflow",
                 atomicPhraseIds: ["suggestRefactoring", "suggestIdiomaticCode", "avoidNesting"],
                 categoryId: "coding"
             },
-            {label: "Proceed", atomicPhraseIds: ["codeOnly", "targetedEdits"], categoryId: "coding"},
-            {label: "Summary", atomicPhraseIds: ["generateSummary", "summarizeForContext"], categoryId: "coding"},
-            {label: "Code Only", atomicPhraseIds: ["codeOnly"], categoryId: "coding"},
-            {label: "Clarifying Questions", atomicPhraseIds: ["askClarify"], categoryId: "coding"},
-            {label: "What Is Missing", atomicPhraseIds: ["askMissingInfo"], categoryId: "coding"},
-            {label: "Targeted Edits", atomicPhraseIds: ["targetedEdits"], categoryId: "coding"},
-            {label: "Debug", atomicPhraseIds: ["addDebugCode"], categoryId: "coding"},
-
+            {
+                label: "Proceed",
+                type: "workflow",
+                atomicPhraseIds: ["codeOnly", "targetedEdits"],
+                categoryId: "coding"
+            },
+            {
+                label: "Summary",
+                type: "workflow",
+                atomicPhraseIds: ["generateSummary", "summarizeForContext"],
+                categoryId: "coding"
+            },
+            {
+                label: "Continue From Summary",
+                type: "workflow",
+                atomicPhraseIds: ["reportInterpretation", "reconciliationGuidance", "resumptionContext"],
+                categoryId: "coding"
+            },
             {
                 label: "Intense Coding Critique",
+                type: "workflow",
                 atomicPhraseIds: [
                     "sysCritiqueWelcomeInsight",
                     "critiqueOverallAssessmentFirst",
@@ -69,19 +82,125 @@ if (!window.aiPromptHelper.phrases) {
                 ],
                 categoryId: "coding"
             },
-            // Expert Mode
+
+            //== CODING: Common Phrases ==//
+            {
+                label: "Code Only",
+                type: "phrase",
+                atomicPhraseIds: ["codeOnly"],
+                categoryId: "coding"
+            },
+            {
+                label: "Clarifying Questions",
+                type: "phrase",
+                atomicPhraseIds: ["askClarify"],
+                categoryId: "coding"
+            },
+            {
+                label: "What Is Missing",
+                type: "phrase",
+                atomicPhraseIds: ["askMissingInfo"],
+                categoryId: "coding"
+            },
+            {
+                label: "Targeted Edits",
+                type: "phrase",
+                atomicPhraseIds: ["targetedEdits"],
+                categoryId: "coding"
+            },
+            {
+                label: "Debug",
+                type: "phrase",
+                atomicPhraseIds: ["addDebugCode"],
+                categoryId: "coding"
+            },
+
+            //== CODING: System Instructions ==//
+            {
+                label: "Critical Expert Mode",
+                type: "system",
+                atomicPhraseIds: [
+                    "sysPrioritizeQualityOverAgreement",
+                    "sysCriticallyEvaluateAllInput",
+                    "sysChallengeFlawedInputProactively",
+                    "sysAdoptConstructiveSkepticism",
+                    "sysExplainChoices",
+                    "sysAdhereToBestPractices"
+                ],
+                categoryId: "coding"
+            },
+            {
+                label: "PHP Expert",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "phpBestPractices", "phpPerformance", "followPSR12", "modernPHP", "phpSecurity"],
+                categoryId: "coding"
+            },
+            {
+                label: "JavaScript Expert",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "jsBestPractices", "jsPerformance", "jsModules", "modernJavaScript"],
+                categoryId: "coding"
+            },
+            {
+                label: "Python Expert",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "pythonBestPractices", "pythonPerformance", "pythonPackageManagement", "pythonTesting"],
+                categoryId: "coding"
+            },
+            {
+                label: "Laravel Expert",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "laravelArchitecture", "laravelPatterns", "laravelUseHelpers"],
+                categoryId: "coding"
+            },
+            {
+                label: "Vue Expert",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "vueArchitecture", "vueComposition", "vueState", "vuePerformance", "vueLifecycle"],
+                categoryId: "coding"
+            },
+            {
+                label: "Vue+Pinia Expert",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "vueArchitecture", "vueComposition", "vueStatePinia", "vuePerformance", "vueLifecycle"],
+                categoryId: "coding"
+            },
+            {
+                label: "Vue+Vuex Expert",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "vueArchitecture", "vueComposition", "vueStateVuex", "vuePerformance", "vueLifecycle"],
+                categoryId: "coding"
+            },
+            {
+                label: "Inertia Expert",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "inertiaPatterns", "inertiaLaravelIntegration", "inertiaVueIntegration", "inertiaForms"],
+                categoryId: "coding"
+            },
+            {
+                label: "REST API Expert",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "apiRestful", "apiVersioning", "apiAuthentication", "apiErrorHandling", "apiCaching", "apiDocumentation"],
+                categoryId: "coding"
+            },
+
+
+            //== EXPERT: Workflow ==//
             {
                 label: "Expert Response Setup",
+                type: "workflow",
                 atomicPhraseIds: ["sysBeLogical", "sysFollowAnsweringRules", "ruleAssignExpertRole", "ruleStepByStepDetails"],
                 categoryId: "expert"
             },
             {
                 label: "Expert with Career Importance",
+                type: "workflow",
                 atomicPhraseIds: ["sysBeLogical", "ruleAssignExpertRole", "ruleCareerImportance", "ruleStepByStepDetails"],
                 categoryId: "expert"
             },
             {
                 label: "Complete Expert Framework",
+                type: "workflow",
                 atomicPhraseIds: [
                     "sysInstructionsHeader",
                     "sysMustAlways",
@@ -107,6 +226,7 @@ if (!window.aiPromptHelper.phrases) {
             },
             {
                 label: "Expert with Formatted Template",
+                type: "workflow",
                 atomicPhraseIds: [
                     "ruleAssignExpertRole",
                     "ruleStepByStepDetails",
@@ -118,6 +238,7 @@ if (!window.aiPromptHelper.phrases) {
             },
             {
                 label: "High-Value Response",
+                type: "workflow",
                 atomicPhraseIds: [
                     "ruleAssignExpertRole",
                     "ruleTipMotivation",
@@ -126,67 +247,254 @@ if (!window.aiPromptHelper.phrases) {
                 ],
                 categoryId: "expert"
             },
+
+            //== EXPERT: Phrases ==//
             {
                 label: "Assign Expert Role",
+                type: "phrase",
                 atomicPhraseIds: ["ruleAssignExpertRole"],
                 categoryId: "expert"
             },
             {
                 label: "Use Message Language",
+                type: "phrase",
                 atomicPhraseIds: ["ruleUseMessageLanguage"],
                 categoryId: "expert"
             },
             {
                 label: "Step-by-Step Details",
+                type: "phrase",
                 atomicPhraseIds: ["ruleStepByStepDetails"],
                 categoryId: "expert"
             },
             {
                 label: "Natural Response Style",
+                type: "phrase",
                 atomicPhraseIds: ["ruleNaturalResponseStyle"],
                 categoryId: "expert"
             },
             {
                 label: "Million Dollar Response",
+                type: "phrase",
                 atomicPhraseIds: ["ruleTipMotivation"],
                 categoryId: "expert"
             },
             {
                 label: "Career Critical",
+                type: "phrase",
                 atomicPhraseIds: ["ruleCareerImportance"],
                 categoryId: "expert"
             },
 
+            //== EXPERT: System Instructions ==//
+            {
+                label: "Adaptive Critical Expert",
+                type: "system",
+                atomicPhraseIds: [
+                    "sysInferDomainAndCritique",
+                    ...CORE_CRITICAL_DIRECTIVES,
+                    "sysAdoptConstructiveSkepticism",
+                    "sysCriticalThinking"
+                ],
+                categoryId: "expert"
+            },
+            {
+                label: "Expert Mode - Full System",
+                type: "system",
+                atomicPhraseIds: [
+                    "sysInstructionsHeader",
+                    "sysMustAlways",
+                    "sysBeLogical",
+                    "sysCodeCompleteness",
+                    "sysHandleCharLimit",
+                    "sysWrongAnswerWarning",
+                    "sysDenyContextOverlook",
+                    "sysFollowAnsweringRules",
+                    "sysAnsweringRulesHeader",
+                    "sysFollowStrictOrder",
+                    "ruleUseMessageLanguage",
+                    "ruleAssignExpertRole",
+                    "ruleStepByStepDetails",
+                    "ruleTipMotivation",
+                    "ruleCareerImportance",
+                    "ruleNaturalResponseStyle",
+                    "ruleUseAnsweringExample",
+                    "exampleHeader",
+                    "templateFirstMessageStructure"
+                ],
+                categoryId: "expert"
+            },
+            {
+                label: "Expert Answering Rules Only",
+                type: "system",
+                atomicPhraseIds: [
+                    "sysAnsweringRulesHeader",
+                    "sysFollowStrictOrder",
+                    "ruleUseMessageLanguage",
+                    "ruleAssignExpertRole",
+                    "ruleStepByStepDetails",
+                    "ruleTipMotivation",
+                    "ruleCareerImportance",
+                    "ruleNaturalResponseStyle",
+                    "ruleUseAnsweringExample"
+                ],
+                categoryId: "expert"
+            },
+            {
+                label: "Expert Core Requirements Only",
+                type: "system",
+                atomicPhraseIds: [
+                    "sysInstructionsHeader",
+                    "sysMustAlways",
+                    "sysBeLogical",
+                    "sysCodeCompleteness",
+                    "sysHandleCharLimit",
+                    "sysWrongAnswerWarning",
+                    "sysDenyContextOverlook"
+                ],
+                categoryId: "expert"
+            },
+            {
+                label: "Complete Expert with Template",
+                type: "system",
+                atomicPhraseIds: [
+                    "sysInstructionsHeader",
+                    "sysMustAlways",
+                    "sysBeLogical",
+                    "sysCodeCompleteness",
+                    "sysHandleCharLimit",
+                    "sysWrongAnswerWarning",
+                    "sysDenyContextOverlook",
+                    "sysFollowAnsweringRules",
+                    "sysAnsweringRulesHeader",
+                    "sysFollowStrictOrder",
+                    "ruleUseMessageLanguage",
+                    "ruleAssignExpertRole",
+                    "ruleStepByStepDetails",
+                    "ruleTipMotivation",
+                    "ruleCareerImportance",
+                    "ruleNaturalResponseStyle",
+                    "ruleUseAnsweringExample",
+                    "exampleHeader",
+                    "templateFirstMessageStructure"
+                ],
+                categoryId: "expert"
+            },
+            {
+                label: "High-Stakes Expert",
+                type: "system",
+                atomicPhraseIds: [
+                    "sysBeLogical",
+                    "sysWrongAnswerWarning",
+                    "sysDenyContextOverlook",
+                    "ruleAssignExpertRole",
+                    "ruleCareerImportance",
+                    "ruleTipMotivation"
+                ],
+                categoryId: "expert"
+            },
 
-            // Writing
+
+            //== WRITING: Workflows ==//
             {
                 label: "Character Development",
+                type: "workflow",
                 atomicPhraseIds: ["characterOutline", "characterBackground", "characterMotivation"],
                 categoryId: "writing"
             },
             {
                 label: "Plot Structure",
+                type: "workflow",
                 atomicPhraseIds: ["plotOutline", "threeActStructure", "herosJourney"],
                 categoryId: "writing"
             },
             {
                 label: "World Building",
+                type: "workflow",
                 atomicPhraseIds: ["worldBuildingBasics", "settingDescription", "culturalSystems"],
                 categoryId: "writing"
             },
             {
                 label: "Dialogue Craft",
+                type: "workflow",
                 atomicPhraseIds: ["dialogueTechniques", "dialogueSubtext", "internalMonologue"],
                 categoryId: "writing"
             },
             {
                 label: "Writing Techniques",
+                type: "workflow",
                 atomicPhraseIds: ["showDontTell", "sensoryDetails", "emotionalImpact"],
                 categoryId: "writing"
             },
             {
                 label: "Revision Help",
+                type: "workflow",
                 atomicPhraseIds: ["revisionFocus", "lineEditing", "consistencyCheck"],
+                categoryId: "writing"
+            },
+
+            //== WRITING: Phrases ==//
+            // (None currently defined)
+
+            //== WRITING: System Instructions ==//
+            {
+                label: "Fiction Writer",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysWritingBalance", "sysWritingVoice", "sysWritingPacing", "sysWritingImmersion", "sysWritingCharacterConsistency"],
+                categoryId: "writing"
+            },
+            {
+                label: "Editor",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysWritingEditorial", "sysWritingCreative", "sysWritingCharacterConsistency", "sysWritingPacing"],
+                categoryId: "writing"
+            },
+            {
+                label: "First Person Narrator",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysNarrativeFirstPerson", "sysWritingVoice", "sysDialogueFocus"],
+                categoryId: "writing"
+            },
+            {
+                label: "Third Person Limited",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysNarrativeThirdLimited", "sysWritingVoice", "sysWritingImmersion"],
+                categoryId: "writing"
+            },
+            {
+                label: "Third Person Omniscient",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysNarrativeThirdOmniscient", "sysWritingVoice", "sysWritingImmersion"],
+                categoryId: "writing"
+            },
+            {
+                label: "Fantasy Writer",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysGenreFantasy", "sysWritingBalance", "sysWritingImmersion"],
+                categoryId: "writing"
+            },
+            {
+                label: "Sci-Fi Writer",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysGenreSciFi", "sysWritingBalance", "sysWritingImmersion"],
+                categoryId: "writing"
+            },
+            {
+                label: "Mystery Writer",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysGenreMystery", "sysWritingPacing", "sysWritingImmersion"],
+                categoryId: "writing"
+            },
+            {
+                label: "Romance Writer",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysGenreRomance", "sysWritingBalance", "sysDialogueFocus"],
+                categoryId: "writing"
+            },
+            {
+                label: "Horror Writer",
+                type: "system",
+                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysGenreHorror", "sysWritingPacing", "sysWritingImmersion"],
                 categoryId: "writing"
             },
 
@@ -222,9 +530,10 @@ if (!window.aiPromptHelper.phrases) {
                 categoryId: "devinMode"
             },
 
-            // --- Devin Mode: User-Activated Workflows (using devinSys phrases) ---
+            //== DEVIN: Workflows ==//
             {
                 label: "Discovery & Planning Phase",
+                type: "workflow",
                 atomicPhraseIds: [
                     "devinSysPlanUnderstandGoalFirst",
                     "devinSysThinkSummarizeUnderstandingBeforeProposingSolution",
@@ -240,6 +549,7 @@ if (!window.aiPromptHelper.phrases) {
             },
             {
                 label: "Continue/Execute & Refine",
+                type: "workflow",
                 atomicPhraseIds: [
                     "devinSysPlanExecuteProvideForCurrentStep",
                     "devinSysIterateOnFailure",
@@ -251,6 +561,7 @@ if (!window.aiPromptHelper.phrases) {
             },
             {
                 label: "Critique & Suggest Improvements",
+                type: "workflow",
                 atomicPhraseIds: [
                     "devinSysCritiqueFocusAndIdentifyArtifact",
                     "devinSysCritiqueThinkProcess",
@@ -261,401 +572,48 @@ if (!window.aiPromptHelper.phrases) {
                 categoryId: "devinMode"
             },
 
-            // --- Adaptive Critical Expert Mode ---
-            // {
-            //     label: "Confirm Adaptive Persona",
-            //     atomicPhraseIds: ["confirmInferredDomain"],
-            //     categoryId: "critic"
-            // },
-            //
-            //
-            // {
-            //     label: "Devil's Advocate",
-            //     atomicPhraseIds: ["playDevilsAdvocateOnMyProposal"],
-            //     categoryId: "critic"
-            // },
-            // {
-            //     label: "Critique My Idea (General)",
-            //     atomicPhraseIds: [
-            //         "sysCritiqueWelcomeInsight",
-            //         "critiqueOverallAssessmentFirst",
-            //         "critiqueIdentifySignificantIssues",
-            //         "critiqueProposeAlternativesIfSuboptimal",
-            //         "critiqueRefineSoundProposals",
-            //         "critiquePlayDevilsAdvocateTargeted",
-            //         "critiqueFocusOnSuperiorOutcome"
-            //     ],
-            //     categoryId: "critic"
-            // },
-            // {
-            //     label: "Analyze Idea: Pros, Cons, Risks",
-            //     atomicPhraseIds: ["analyzeProsConsRisks"],
-            //     categoryId: "critic"
-            // },
-            // {
-            //     label: "Brainstorm & Critique Solutions",
-            //     atomicPhraseIds: ["brainstormSolutionsCritically", "suggestAlternatives"],
-            //     categoryId: "critic"
-            // },
-            // {
-            //     label: "Assess Strategic Impact",
-            //     atomicPhraseIds: ["strategicImpactAssessment", "askClarify"],
-            //     categoryId: "critic"
-            // },
-            // {
-            //     label: "Explore Alternatives (General)",
-            //     atomicPhraseIds: ["suggestAlternatives", "justifyCritiqueAndAlternatives"],
-            //     categoryId: "critic"
-            // },
-            // {
-            //     label: "Emphasize: Output Quality & Importance",
-            //     atomicPhraseIds: [
-            //         "sysStressTaskImportance",
-            //         "sysValueExceptionalPerformance"
-            //     ],
-            //     categoryId: "critic"
-            // },
-            // {
-            //     label: "Emphasize: High-Stakes & Precision",
-            //     atomicPhraseIds: [
-            //         "sysCriticalChallengeHighBar",
-            //         "sysOutputImpactsKeyDecisions"
-            //     ],
-            //     categoryId: "critic"
-            // },
-            // {
-            //     label: "Refresh Align",
-            //     atomicPhraseIds: [
-            //         "sysAIAlign",
-            //     ],
-            //     categoryId: "critic"
-            // },
-// Critic Workflows
+            //== DEVIN: Phrases ==//
             {
-                label: "Full Critique Process",
-                atomicPhraseIds: [
-                    "criticInitialImpression",
-                    "criticStructuralAnalysis",
-                    "criticLogicalIntegrity",
-                    "criticCounterarguments",
-                    "criticSynthesis",
-                    "criticPrioritizedRecommendations"
-                ],
-                categoryId: "critic"
+                label: "Explain Your Thinking",
+                type: "phrase",
+                atomicPhraseIds: ["devinSysThinkExplainReasoningBeforeComplexOutput"],
+                categoryId: "devinMode"
             },
             {
-                label: "First Principles Analysis",
-                atomicPhraseIds: [
-                    "criticFirstPrinciples",
-                    "criticBlindspotsGaps",
-                    "criticAlternativeApproaches"
-                ],
-                categoryId: "critic"
+                label: "Request Missing Info",
+                type: "phrase",
+                atomicPhraseIds: ["devinSysRequestMissingCriticalInfo"],
+                categoryId: "devinMode"
             },
             {
-                label: "Practical Assessment",
-                atomicPhraseIds: [
-                    "criticImplementationFeasibility",
-                    "criticRiskReward",
-                    "criticPrioritizedRecommendations"
-                ],
-                categoryId: "critic"
-            },
-            // Critic Singles
-            {
-                label: "Initial Impression",
-                atomicPhraseIds: ["criticInitialImpression"],
-                categoryId: "critic"
+                label: "Ask Clarifying Questions",
+                type: "phrase",
+                atomicPhraseIds: ["devinSysAskClarifyingQuestionsIfAmbiguous"],
+                categoryId: "devinMode"
             },
             {
-                label: "Logical Analysis",
-                atomicPhraseIds: ["criticLogicalIntegrity"],
-                categoryId: "critic"
+                label: "Iterate on Last Failure",
+                type: "phrase",
+                atomicPhraseIds: ["devinSysIterateOnFailure"],
+                categoryId: "devinMode"
             },
             {
-                label: "Alternative Approaches",
-                atomicPhraseIds: ["criticAlternativeApproaches"],
-                categoryId: "critic"
+                label: "Propose Plan Now",
+                type: "phrase",
+                atomicPhraseIds: ["devinSysPlanProposeHighLevelPlan"],
+                categoryId: "devinMode"
             },
             {
-                label: "Risk-Reward Assessment",
-                atomicPhraseIds: ["criticRiskReward"],
-                categoryId: "critic"
-            },
-            {
-                label: "Implementation Feasibility",
-                atomicPhraseIds: ["criticImplementationFeasibility"],
-                categoryId: "critic"
-            },
-            {
-                label: "Unintended Consequences",
-                atomicPhraseIds: ["criticUnintendedConsequences"],
-                categoryId: "critic"
-            },
-            {
-                label: "Prioritized Recommendations",
-                atomicPhraseIds: ["criticPrioritizedRecommendations"],
-                categoryId: "critic"
-            },
-            {
-                label: "Socratic Questioning",
-                atomicPhraseIds: ["criticSocratic"],
-                categoryId: "critic"
+                label: "Focus on Code Style",
+                type: "phrase",
+                atomicPhraseIds: ["devinSysCodingStyleRequestExistingToMimic"],
+                categoryId: "devinMode"
             },
 
-
-        ],
-        systemInstructionButtons: [
-            // Critical Mode
-            {
-                label: "Critical Expert Mode",
-                atomicPhraseIds: [
-                    "sysPrioritizeQualityOverAgreement",
-                    "sysCriticallyEvaluateAllInput",
-                    "sysChallengeFlawedInputProactively",
-                    "sysAdoptConstructiveSkepticism",
-                    "sysExplainChoices",
-                    "sysAdhereToBestPractices"
-                ],
-                categoryId: "coding"
-            },
-            {
-                label: "Adaptive Critical Expert",
-                atomicPhraseIds: [
-                    "sysInferDomainAndCritique",
-                    ...CORE_CRITICAL_DIRECTIVES,
-                    "sysAdoptConstructiveSkepticism",
-                    "sysCriticalThinking",
-                ],
-                categoryId: "expert"
-            },
-
-            // Critique
-            {
-                label: "Principled Critic",
-                atomicPhraseIds: [
-                    "sysCriticPrinciplesObjectivity",
-                    "sysCriticPrinciplesConsequence",
-                    "sysCriticPrinciplesBalance",
-                    "sysCriticPrinciplesActionability",
-                    "sysCriticPrinciplesEthics"
-                ],
-                categoryId: "critic"
-            },
-            {
-                label: "Intellectual Critic",
-                atomicPhraseIds: [
-                    "sysCriticIntellectualFoundation",
-                    "sysCriticIntellectualMethods",
-                    "sysCriticIntellectualStandards",
-                    "sysCriticIntellectualVirtues"
-                ],
-                categoryId: "critic"
-            },
-            {
-                label: "Practical Critic",
-                atomicPhraseIds: [
-                    "sysCriticPracticalContext",
-                    "sysCriticPracticalFrameworks",
-                    "sysCriticPracticalOutcomes",
-                    "sysCriticPracticalImplementation"
-                ],
-                categoryId: "critic"
-            },
-
-
-            // Language Expert Buttons
-            {
-                label: "PHP Expert",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "phpBestPractices", "phpPerformance", "followPSR12", "modernPHP", "phpSecurity"],
-                categoryId: "coding"
-            },
-            {
-                label: "JavaScript Expert",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "jsBestPractices", "jsPerformance", "jsModules", "modernJavaScript"],
-                categoryId: "coding"
-            },
-            {
-                label: "Python Expert",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "pythonBestPractices", "pythonPerformance", "pythonPackageManagement", "pythonTesting"],
-                categoryId: "coding"
-            },
-
-            // Framework Expert Buttons
-            {
-                label: "Laravel Expert",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "laravelArchitecture", "laravelPatterns", "laravelUseHelpers"],
-                categoryId: "coding"
-            },
-            {
-                label: "Vue Expert",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "vueArchitecture", "vueComposition", "vueState", "vuePerformance", "vueLifecycle"],
-                categoryId: "coding"
-            },
-            {
-                label: "Vue+Pinia Expert",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "vueArchitecture", "vueComposition", "vueStatePinia", "vuePerformance", "vueLifecycle"],
-                categoryId: "coding"
-            },
-            {
-                label: "Vue+Vuex Expert",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "vueArchitecture", "vueComposition", "vueStateVuex", "vuePerformance", "vueLifecycle"],
-                categoryId: "coding"
-            },
-            {
-                label: "Inertia Expert",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "inertiaPatterns", "inertiaLaravelIntegration", "inertiaVueIntegration", "inertiaForms"],
-                categoryId: "coding"
-            },
-            {
-                label: "REST API Expert",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "apiRestful", "apiVersioning", "apiAuthentication", "apiErrorHandling", "apiCaching", "apiDocumentation"],
-                categoryId: "coding"
-            },
-            // Writing
-            {
-                label: "Fiction Writer",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysWritingBalance", "sysWritingVoice", "sysWritingPacing", "sysWritingImmersion", "sysWritingCharacterConsistency"],
-                categoryId: "writing"
-            },
-            {
-                label: "Editor",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysWritingEditorial", "sysWritingCreative", "sysWritingCharacterConsistency", "sysWritingPacing"],
-                categoryId: "writing"
-            },
-            {
-                label: "First Person Narrator",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysNarrativeFirstPerson", "sysWritingVoice", "sysDialogueFocus"],
-                categoryId: "writing"
-            },
-            {
-                label: "Third Person Limited",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysNarrativeThirdLimited", "sysWritingVoice", "sysWritingImmersion"],
-                categoryId: "writing"
-            },
-            {
-                label: "Third Person Omniscient",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysNarrativeThirdOmniscient", "sysWritingVoice", "sysWritingImmersion"],
-                categoryId: "writing"
-            },
-            {
-                label: "Fantasy Writer",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysGenreFantasy", "sysWritingBalance", "sysWritingImmersion"],
-                categoryId: "writing"
-            },
-            {
-                label: "Sci-Fi Writer",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysGenreSciFi", "sysWritingBalance", "sysWritingImmersion"],
-                categoryId: "writing"
-            },
-            {
-                label: "Mystery Writer",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysGenreMystery", "sysWritingPacing", "sysWritingImmersion"],
-                categoryId: "writing"
-            },
-            {
-                label: "Romance Writer",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysGenreRomance", "sysWritingBalance", "sysDialogueFocus"],
-                categoryId: "writing"
-            },
-            {
-                label: "Horror Writer",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysGenreHorror", "sysWritingPacing", "sysWritingImmersion"],
-                categoryId: "writing"
-            },
-            // Expert Mode System Instructions
-            {
-                label: "Expert Mode - Full System",
-                atomicPhraseIds: [
-                    "sysInstructionsHeader",
-                    "sysMustAlways",
-                    "sysBeLogical",
-                    "sysCodeCompleteness",
-                    "sysHandleCharLimit",
-                    "sysWrongAnswerWarning",
-                    "sysDenyContextOverlook",
-                    "sysFollowAnsweringRules",
-                    "sysAnsweringRulesHeader",
-                    "sysFollowStrictOrder",
-                    "ruleUseMessageLanguage",
-                    "ruleAssignExpertRole",
-                    "ruleStepByStepDetails",
-                    "ruleTipMotivation",
-                    "ruleCareerImportance",
-                    "ruleNaturalResponseStyle",
-                    "ruleUseAnsweringExample",
-                    "exampleHeader",
-                    "templateFirstMessageStructure"
-                ],
-                categoryId: "expert"
-            },
-            {
-                label: "Expert Answering Rules Only",
-                atomicPhraseIds: [
-                    "sysAnsweringRulesHeader",
-                    "sysFollowStrictOrder",
-                    "ruleUseMessageLanguage",
-                    "ruleAssignExpertRole",
-                    "ruleStepByStepDetails",
-                    "ruleTipMotivation",
-                    "ruleCareerImportance",
-                    "ruleNaturalResponseStyle",
-                    "ruleUseAnsweringExample"
-                ],
-                categoryId: "expert"
-            },
-            {
-                label: "Expert Core Requirements Only",
-                atomicPhraseIds: [
-                    "sysInstructionsHeader",
-                    "sysMustAlways",
-                    "sysBeLogical",
-                    "sysCodeCompleteness",
-                    "sysHandleCharLimit",
-                    "sysWrongAnswerWarning",
-                    "sysDenyContextOverlook"
-                ],
-                categoryId: "expert"
-            },
-            {
-                label: "Complete Expert with Template",
-                atomicPhraseIds: [
-                    "sysInstructionsHeader",
-                    "sysMustAlways",
-                    "sysBeLogical",
-                    "sysCodeCompleteness",
-                    "sysHandleCharLimit",
-                    "sysWrongAnswerWarning",
-                    "sysDenyContextOverlook",
-                    "sysFollowAnsweringRules",
-                    "sysAnsweringRulesHeader",
-                    "sysFollowStrictOrder",
-                    "ruleUseMessageLanguage",
-                    "ruleAssignExpertRole",
-                    "ruleStepByStepDetails",
-                    "ruleTipMotivation",
-                    "ruleCareerImportance",
-                    "ruleNaturalResponseStyle",
-                    "ruleUseAnsweringExample",
-                    "exampleHeader",
-                    "templateFirstMessageStructure"
-                ],
-                categoryId: "expert"
-            },
-            {
-                label: "High-Stakes Expert",
-                atomicPhraseIds: [
-                    "sysBeLogical",
-                    "sysWrongAnswerWarning",
-                    "sysDenyContextOverlook",
-                    "ruleAssignExpertRole",
-                    "ruleCareerImportance",
-                    "ruleTipMotivation"
-                ],
-                categoryId: "expert"
-            },
+            //== DEVIN: System Instructions ==//
             {
                 label: "Devin Mode - Full System Persona",
+                type: "system",
                 atomicPhraseIds: [
                     // --- Core Role & Mindset ---
                     "devinSysRolePrimaryDirective",
@@ -701,10 +659,131 @@ if (!window.aiPromptHelper.phrases) {
                     // --- Environment Awareness (General Principles) ---
                     "devinSysEnvSuspectAndState",
                     "devinSysEnvSuggestCheckCommands",
-                    "devinSysEnvAvoidDirectFixCommands",
+                    "devinSysEnvAvoidDirectFixCommands"
                 ],
                 categoryId: "devinMode"
             },
+
+            //== CRITIC: Workflows ==//
+            {
+                label: "Full Critique Process",
+                type: "workflow",
+                atomicPhraseIds: [
+                    "criticInitialImpression",
+                    "criticStructuralAnalysis",
+                    "criticLogicalIntegrity",
+                    "criticCounterarguments",
+                    "criticSynthesis",
+                    "criticPrioritizedRecommendations"
+                ],
+                categoryId: "critic"
+            },
+            {
+                label: "First Principles Analysis",
+                type: "workflow",
+                atomicPhraseIds: [
+                    "criticFirstPrinciples",
+                    "criticBlindspotsGaps",
+                    "criticAlternativeApproaches"
+                ],
+                categoryId: "critic"
+            },
+            {
+                label: "Practical Assessment",
+                type: "workflow",
+                atomicPhraseIds: [
+                    "criticImplementationFeasibility",
+                    "criticRiskReward",
+                    "criticPrioritizedRecommendations"
+                ],
+                categoryId: "critic"
+            },
+
+            //== CRITIC: Phrases ==//
+            {
+                label: "Initial Impression",
+                type: "phrase",
+                atomicPhraseIds: ["criticInitialImpression"],
+                categoryId: "critic"
+            },
+            {
+                label: "Logical Analysis",
+                type: "phrase",
+                atomicPhraseIds: ["criticLogicalIntegrity"],
+                categoryId: "critic"
+            },
+            {
+                label: "Alternative Approaches",
+                type: "phrase",
+                atomicPhraseIds: ["criticAlternativeApproaches"],
+                categoryId: "critic"
+            },
+            {
+                label: "Risk-Reward Assessment",
+                type: "phrase",
+                atomicPhraseIds: ["criticRiskReward"],
+                categoryId: "critic"
+            },
+            {
+                label: "Implementation Feasibility",
+                type: "phrase",
+                atomicPhraseIds: ["criticImplementationFeasibility"],
+                categoryId: "critic"
+            },
+            {
+                label: "Unintended Consequences",
+                type: "phrase",
+                atomicPhraseIds: ["criticUnintendedConsequences"],
+                categoryId: "critic"
+            },
+            {
+                label: "Prioritized Recommendations",
+                type: "phrase",
+                atomicPhraseIds: ["criticPrioritizedRecommendations"],
+                categoryId: "critic"
+            },
+            {
+                label: "Socratic Questioning",
+                type: "phrase",
+                atomicPhraseIds: ["criticSocratic"],
+                categoryId: "critic"
+            },
+
+            //== CRITIC: System Instructions ==//
+            {
+                label: "Principled Critic",
+                type: "system",
+                atomicPhraseIds: [
+                    "sysCriticPrinciplesObjectivity",
+                    "sysCriticPrinciplesConsequence",
+                    "sysCriticPrinciplesBalance",
+                    "sysCriticPrinciplesActionability",
+                    "sysCriticPrinciplesEthics"
+                ],
+                categoryId: "critic"
+            },
+            {
+                label: "Intellectual Critic",
+                type: "system",
+                atomicPhraseIds: [
+                    "sysCriticIntellectualFoundation",
+                    "sysCriticIntellectualMethods",
+                    "sysCriticIntellectualStandards",
+                    "sysCriticIntellectualVirtues"
+                ],
+                categoryId: "critic"
+            },
+            {
+                label: "Practical Critic",
+                type: "system",
+                atomicPhraseIds: [
+                    "sysCriticPracticalContext",
+                    "sysCriticPracticalFrameworks",
+                    "sysCriticPracticalOutcomes",
+                    "sysCriticPracticalImplementation"
+                ],
+                categoryId: "critic"
+            }
         ]
     }
 }

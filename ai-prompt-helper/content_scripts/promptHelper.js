@@ -610,12 +610,15 @@ function rebuildPhraseButtons(panel) {
                 if (item.isUserPhrase) {
                     userCont.appendChild(btn);
                     userCount++;
-                } else if (phrases.length > 1) {
+                } else if (item.type === "workflow") {
                     comboCont.appendChild(btn);
                     comboCount++;
-                } else {
+                } else if (item.type === "phrase") {
                     singleCont.appendChild(btn);
                     singleCount++;
+                } else if (item.type === "system") {
+                    systemCont.appendChild(btn);
+                    systemCount++;
                 }
             }
         } else {
@@ -628,65 +631,6 @@ function rebuildPhraseButtons(panel) {
             singleCount++;
         }
     });
-
-    if (window.aiPromptHelper &&
-        window.aiPromptHelper.phrases &&
-        window.aiPromptHelper.phrases.systemInstructionButtons) {
-
-        const systemButtons = window.aiPromptHelper.phrases.systemInstructionButtons || [];
-
-        systemButtons.forEach(item => {
-            const btn = document.createElement('button');
-            btn.className = 'phraseBtn';
-            btn.innerHTML = '';
-
-            if (item.categoryId) {
-                btn.dataset.categoryId = item.categoryId;
-            }
-
-            const labelSpan = document.createElement('span');
-            labelSpan.className = 'phraseLabel';
-            labelSpan.textContent = item.label;
-            btn.appendChild(labelSpan);
-
-            if (item.atomicPhraseIds && Array.isArray(item.atomicPhraseIds) && item.atomicPhraseIds.length > 0) {
-                const phrases = [];
-                item.atomicPhraseIds.forEach(id => {
-                    if (atomicPhrases[id]) {
-                        phrases.push(atomicPhrases[id]);
-                    } else {
-                        console.warn(`Prompt Helper: Atomic phrase ID "${id}" not found or disabled for button "${item.label}".`);
-                    }
-                });
-
-                if (phrases.length > 0) {
-                    btn.title = `Insert: ${item.label}\n(${item.atomicPhraseIds.join(' + ')})\n\n---\n${phrases.join('\n---\n')}`;
-                    btn.onclick = function () {
-                        phrases.forEach(p => addTextToTarget(p, false));
-                    };
-                    btn.addEventListener('mouseenter', function() {
-                        if (lastFocusedTextarea && document.body.contains(lastFocusedTextarea) && lastFocusedTextarea.offsetParent !== null) {
-                            updateDragTargetHighlight(true, lastFocusedTextarea);
-                        }
-                    });
-                    btn.addEventListener('mouseleave', function() {
-                        updateDragTargetHighlight(false);
-                    });
-
-                    systemCont.appendChild(btn);
-                    systemCount++;
-                }
-            } else {
-                labelSpan.textContent = item.label + " (Error: Invalid Definition)";
-                btn.disabled = true;
-                btn.title = `Error: Item has no valid 'atomicPhraseIds' array.`;
-                btn.style.cursor = 'not-allowed';
-                btn.classList.add('errorButton');
-                systemCont.appendChild(btn);
-                systemCount++;
-            }
-        });
-    }
 
     if (comboCount > 0) {
         comboHeader.style.display = 'block';
