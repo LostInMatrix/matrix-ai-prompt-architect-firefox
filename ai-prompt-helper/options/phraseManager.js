@@ -1302,7 +1302,14 @@ function openExportPanel() {
                 <option value="" disabled selected>-- Select a category --</option>
             </select>
         </div>
-        <p class="description">Export your phrases as JSON files to share or backup.</p>
+        <div class="form-group">
+            <label for="panelExportFormatSelect">Export Format:</label>
+            <select id="panelExportFormatSelect" required>
+                <option value="simplified" selected>Simplified (Import Compatible)</option>
+                <option value="comprehensive">Comprehensive (Full Data)</option>
+            </select>
+        </div>
+        <p class="description">Export your phrases as JSON files to share or backup. Simplified format is compatible with imports.</p>
         <div class="form-actions">
             <button type="button" id="panelExportConfirmBtn">Export</button>
             <button type="button" id="panelCancelExportBtn">Cancel</button>
@@ -1316,12 +1323,22 @@ function openExportPanel() {
 
     document.getElementById('panelExportConfirmBtn').addEventListener('click', function() {
         const categorySelect = document.getElementById('panelExportCategorySelect');
+        const formatSelect = document.getElementById('panelExportFormatSelect');
+
         if (!categorySelect || !categorySelect.value) {
             AlertSystem.error("Please select a category to export.");
             return;
         }
 
-        exportPhrasesFromPanel(categorySelect.value, categorySelect.options[categorySelect.selectedIndex].text);
+        const categoryId = categorySelect.value;
+        const categoryName = categorySelect.options[categorySelect.selectedIndex].text;
+        const format = formatSelect.value;
+
+        if (format === 'simplified') {
+            exportPhrasesSimplified(categoryId, categoryName);
+        } else {
+            exportPhrasesFromPanel(categoryId, categoryName);
+        }
     });
 
     document.getElementById('panelCancelExportBtn').addEventListener('click', closeSlidePanel);
@@ -1329,6 +1346,100 @@ function openExportPanel() {
     slidePanel.classList.add('active');
     panelOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
+}
+
+function exportPhrasesSimplified(categoryId, categoryName) {
+    Promise.all([
+        browser.storage.local.get([STORAGE_KEY_CUSTOM_PHRASES, STORAGE_KEY_USER_BUTTONS]),
+        browser.storage.local.get('aiPromptHelperCategories')
+    ]).then(([phraseData, categoryData]) => {
+        const customPhrases = phraseData[STORAGE_KEY_CUSTOM_PHRASES] || {};
+        const userButtons = phraseData[STORAGE_KEY_USER_BUTTONS] || {};
+        const userCategories = categoryData.aiPromptHelperCategories || {};
+        const defaultCategories = window.aiPromptHelper?.categories || {};
+        const defaultButtons = window.aiPromptHelper?.phrases?.buttonDefinitions || [];
+        const allAtomicPhrases = window.aiPromptHelper?.phrases?.atomicPhrases || {};
+
+        const allCategories = { ...defaultCategories, ...userCategories };
+        const categoryInfo = allCategories[categoryId];
+
+        const phrases = [];
+
+        defaultButtons.forEach(button => {
+            if (button.categoryId === categoryId) {
+                const content = button.atomicPhraseIds?.map(id => {
+                    const override = customPhrases[id];
+                    if (override && override.isAtomicOverride) {
+                        return override.content;
+                    }
+                    return allAtomicPhrases[id] || '';
+                }).filter(text => text.trim()).join(' ') || '';
+
+                if (content) {
+                    phrases.push({
+                        label: button.label,
+                        type: button.type,
+                        content: content
+                    });
+                }
+            }
+        });
+
+        Object.values(userButtons).forEach(button => {
+            if (button.categoryId === categoryId) {
+                const content = button.atomicPhraseIds?.map(id => {
+                    const override = customPhrases[id];
+                    if (override && override.isAtomicOverride) {
+                        return override.content;
+                    }
+                    return allAtomicPhrases[id] || '';
+                }).filter(text => text.trim()).join(' ') || '';
+
+                if (content) {
+                    phrases.push({
+                        label: button.label,
+                        type: button.type,
+                        content: content
+                    });
+                }
+            }
+        });
+
+        Object.values(customPhrases).forEach(phrase => {
+            if (phrase.categoryId === categoryId && !phrase.isAtomicOverride) {
+                phrases.push({
+                    label: phrase.label,
+                    type: 'phrase',
+                    content: phrase.content
+                });
+            }
+        });
+
+        const exportData = {
+            category: {
+                name: categoryInfo?.name || categoryName.replace(/^[^\s]*\s/, ''),
+                icon: categoryInfo?.icon || '📝'
+            },
+            phrases: phrases
+        };
+
+        const dataStr = JSON.stringify(exportData, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        const exportFileName = `${categoryId}-simple-export-${new Date().toISOString().split('T')[0]}.json`;
+
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileName);
+        document.body.appendChild(linkElement);
+        linkElement.click();
+        document.body.removeChild(linkElement);
+
+        AlertSystem.success(`Exported ${phrases.length} phrases for category "${categoryName}" in simplified format.`);
+        closeSlidePanel();
+    }).catch(error => {
+        console.error("[Export Error] Error during simplified export:", error);
+        AlertSystem.error(`Export failed: ${error.message}`);
+    });
 }
 
 function exportPhrasesFromPanel(categoryId, categoryName) {
