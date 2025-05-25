@@ -1020,6 +1020,9 @@ function initCategoryManagement() {
 document.addEventListener('DOMContentLoaded', () => {
     loadInitialData();
     createTabsAndPanels();
+    initializeDarkMode();
+
+    document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
 
     document.getElementById('createCategoryBtn').addEventListener('click', function() {
         resetForm();
