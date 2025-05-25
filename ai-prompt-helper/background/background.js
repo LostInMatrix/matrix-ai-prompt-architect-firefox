@@ -312,12 +312,36 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     }
 });
 
+async function detectExistingContentScript(tabId) {
+    try {
+        const response = await browser.tabs.sendMessage(tabId, { action: 'ping' });
+        return response && response.success;
+    } catch (err) {
+        return false;
+    }
+}
+
 async function initializeTabStates() {
     console.log("[AI Helper BG] Initializing tab states.");
     try {
         const tabs = await browser.tabs.query({});
+
         for (const tab of tabs) {
             if (tab.id && tab.url) {
+                const hasExistingScript = await detectExistingContentScript(tab.id);
+
+                if (hasExistingScript) {
+                    console.log(`[AI Helper BG] Found existing content script in tab ${tab.id}, reconnecting`);
+                    activeTabs.add(tab.id);
+                    await updateActionState(tab.id, true);
+                    try {
+                        await browser.tabs.sendMessage(tab.id, { action: 'reconnectBackground' });
+                    } catch (err) {
+                        console.error(`[AI Helper BG] Failed to reconnect to existing script in tab ${tab.id}:`, err);
+                    }
+                    continue;
+                }
+
                 let shouldEnable = shouldAutoEnable(tab.url);
 
                 if (!shouldEnable) {
@@ -326,7 +350,6 @@ async function initializeTabStates() {
                         try {
                             const result = await browser.storage.local.get(DOMAIN_PREFERENCES_KEY);
                             const preferences = result[DOMAIN_PREFERENCES_KEY] || {};
-                            console.log(`[AI Helper BG] Checking stored preferences for ${domainPattern}:`, preferences);
 
                             if (preferences[domainPattern] === true) {
                                 shouldEnable = true;
@@ -373,6 +396,11 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+    if (message.action === 'ping') {
+        sendResponse({ success: true });
+        return true;
+    }
+
     if (message.action === 'getInitialState') {
         browser.storage.local.get([STORAGE_KEYS.DARK_MODE, STORAGE_KEYS.BUTTON_POSITION])
             .then(data => sendResponse({ success: true, data: data }))

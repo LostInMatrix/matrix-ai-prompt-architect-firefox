@@ -36,6 +36,9 @@ let dropListener = null;
 let isUIRendered = false;
 let alertDebounceTimer = null;
 let currentHighlightedDropTarget = null;
+let heartbeatInterval = null;
+let reconnectionAttempts = 0;
+const MAX_RECONNECTION_ATTEMPTS = 3;
 
 const PANEL_WIDTH_ESTIMATE = 270;
 const PANEL_MAX_HEIGHT_ESTIMATE = window.innerHeight * 0.8;
@@ -1034,7 +1037,7 @@ function detectMessages() {
         }
     });
 
-    return messages.reverse();
+    return messages;
 }
 
 function scrollToMessage(messageElement) {
@@ -1271,6 +1274,11 @@ function deactivatePromptHelper() {
     console.log('%c AI Prompt Helper: Deactivating...', 'color: red; font-weight: bold;');
     isUIRendered = false;
 
+    if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+        heartbeatInterval = null;
+    }
+
     const panel = document.getElementById(PANEL_ID);
     if (panel) {
         panel.remove();
@@ -1404,6 +1412,7 @@ async function renderUIAndAttachListeners() {
             if (initialPanel) initialPanel.style.display = 'none';
             updateToggleButtonText();
             isUIRendered = true;
+            startHeartbeat();
             console.log('AI Prompt Helper: UI Rendered.');
         }
     });
@@ -1423,14 +1432,29 @@ function initializePromptHelper() {
 
     messageListener = (message, sender, sendResponse) => {
         console.log(`%c    >> Message Listener Received: ${message.action} - ${new Date().toLocaleTimeString()}`, 'color: purple; font-weight: bold;');
-        if (message.action === 'renderContentUI') {
+        if (message.action === 'ping') {
+            sendResponse({ success: true });
+            return true;
+        } else if (message.action === 'renderContentUI') {
             console.log("       >> Calling renderUIAndAttachListeners...");
+            const existingUI = document.getElementById(TOGGLE_BTN_ID);
+            if (existingUI) {
+                console.log("       >> Removing orphaned UI from previous extension context...");
+                existingUI.remove();
+                const existingPanel = document.getElementById(PANEL_ID);
+                if (existingPanel) {
+                    existingPanel.remove();
+                }
+                isUIRendered = false;
+            }
             renderUIAndAttachListeners();
         } else if (message.action === 'deactivatePromptHelper') {
             console.log("       >> Calling deactivatePromptHelper...");
             deactivatePromptHelper();
-        }
-        else if (message.action === 'resetButtonPosition') {
+        } else if (message.action === 'reconnectBackground') {
+            console.log("       >> Reconnecting to background...");
+            startHeartbeat();
+        } else if (message.action === 'resetButtonPosition') {
             console.log("       >> Resetting button position...");
             const toggleBtn = document.getElementById(TOGGLE_BTN_ID);
             if (toggleBtn) {
@@ -1457,6 +1481,53 @@ function initializePromptHelper() {
         window.aiPromptHelperInitialized = false;
     }
     console.log(`%c << initializePromptHelper finished - ${new Date().toLocaleTimeString()}`, 'color: green;');
+}
+
+function startHeartbeat() {
+    if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+    }
+
+    heartbeatInterval = setInterval(async () => {
+        try {
+            await browser.runtime.sendMessage({ action: 'ping' });
+            reconnectionAttempts = 0;
+        } catch (error) {
+            console.warn('AI Prompt Helper: Background connection lost, attempting reconnection...');
+            reconnectionAttempts++;
+
+            if (reconnectionAttempts >= MAX_RECONNECTION_ATTEMPTS) {
+                clearInterval(heartbeatInterval);
+                showReconnectionUI();
+            }
+        }
+    }, 5000);
+}
+
+function showReconnectionUI() {
+    const toggleBtn = document.getElementById(TOGGLE_BTN_ID);
+    if (toggleBtn) {
+        const textBtn = document.getElementById(TOGGLE_BTN_TEXT_ID);
+        if (textBtn) {
+            const originalText = textBtn.textContent;
+            const originalOnClick = textBtn.onclick;
+
+            textBtn.textContent = 'Refresh Page';
+            textBtn.title = 'Extension updated - refresh page to restore functionality';
+            textBtn.style.backgroundColor = '#ff6b6b';
+            textBtn.onclick = () => window.location.reload();
+
+            setTimeout(() => {
+                if (textBtn.textContent === 'Refresh Page') {
+                    textBtn.textContent = originalText;
+                    textBtn.title = 'Click to show/hide the AI Helper panel';
+                    textBtn.style.backgroundColor = '';
+                    textBtn.onclick = originalOnClick;
+                    startHeartbeat();
+                }
+            }, 10000);
+        }
+    }
 }
 
 function isNonTextFile(file) {

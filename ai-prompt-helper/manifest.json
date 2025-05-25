@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Matrix AI Prompt Architect",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Adds buttons with hotkeys and a multi-file drop zone to insert predefined phrases into AI chat inputs",
   "icons": {
     "48": "icons/icon-48.png",
