@@ -2,6 +2,7 @@
 
 const STORAGE_KEY_BUTTON_STATUS = 'promptHelperButtonStatus';
 const STORAGE_KEY_CUSTOM_PHRASES = 'promptHelperCustomPhrases';
+const STORAGE_KEY_USER_BUTTONS = 'promptHelperUserButtons';
 
 const addCustomPhraseForm = document.getElementById('addCustomPhraseForm');
 const phraseIdInput = document.getElementById('phraseId');
@@ -164,6 +165,82 @@ function displayCustomPhrases(phrases, container) {
         phraseRow.appendChild(actionColumn);
 
         container.appendChild(phraseRow);
+    });
+}
+
+function displayUserButtonGroup(buttons, statuses, container, allAtomicPhrases, customPhrases) {
+    buttons.forEach(button => {
+        const enabled = statuses[button.label] !== false;
+
+        const buttonRow = document.createElement('div');
+        buttonRow.className = 'phrase-row';
+
+        const labelElement = document.createElement('div');
+        labelElement.className = 'column column-label';
+        labelElement.textContent = button.label;
+
+        const badgeColumn = document.createElement('div');
+        badgeColumn.className = 'column column-badge';
+        const badge = document.createElement('span');
+        badge.className = 'badge';
+        if (button.type === 'system') {
+            badge.classList.add('system');
+            badge.textContent = 'imported system';
+        } else if (button.type === 'workflow') {
+            badge.classList.add('workflow');
+            badge.textContent = 'imported workflow';
+        } else {
+            badge.classList.add('phrase');
+            badge.textContent = 'imported phrase';
+        }
+        badgeColumn.appendChild(badge);
+
+        const previewColumn = document.createElement('div');
+        previewColumn.className = 'column column-preview';
+        const phrasesPreview = document.createElement('div');
+        phrasesPreview.className = 'phrases-list-preview';
+        if (button.atomicPhraseIds && button.atomicPhraseIds.length > 0) {
+            const phrasesList = document.createElement('ul');
+            button.atomicPhraseIds.forEach(id => {
+                let atomicPhraseContent = allAtomicPhrases[id];
+                if (!atomicPhraseContent && customPhrases[id] && customPhrases[id].isAtomicOverride) {
+                    atomicPhraseContent = customPhrases[id].content;
+                }
+                if (atomicPhraseContent) {
+                    const phraseItem = document.createElement('li');
+                    phraseItem.textContent = atomicPhraseContent;
+                    phraseItem.title = atomicPhraseContent;
+                    phrasesList.appendChild(phraseItem);
+                } else {
+                    console.warn(`Atomic phrase ID "${id}" not found for button "${button.label}"`);
+                }
+            });
+            phrasesPreview.appendChild(phrasesList);
+        }
+        previewColumn.appendChild(phrasesPreview);
+
+        const toggleColumn = document.createElement('div');
+        toggleColumn.className = 'column column-toggle';
+        const toggleLabel = document.createElement('label');
+        toggleLabel.className = 'switch';
+        const toggleInput = document.createElement('input');
+        toggleInput.type = 'checkbox';
+        toggleInput.checked = enabled;
+        toggleInput.addEventListener('change', () => {
+            updateButtonStatus(button.label, toggleInput.checked);
+        });
+        const toggleSlider = document.createElement('span');
+        toggleSlider.className = 'slider';
+        toggleLabel.appendChild(toggleInput);
+        toggleLabel.appendChild(toggleSlider);
+        toggleColumn.appendChild(toggleLabel);
+
+        buttonRow.appendChild(labelElement);
+        buttonRow.appendChild(badgeColumn);
+        buttonRow.appendChild(previewColumn);
+        buttonRow.appendChild(toggleColumn);
+
+        container.appendChild(buttonRow);
     });
 }
 
@@ -626,10 +703,12 @@ async function renderPanelContent(categoryId, panelElement = null) {
 
         const buttonData = await browser.storage.local.get({
             [STORAGE_KEY_BUTTON_STATUS]: {},
-            [STORAGE_KEY_CUSTOM_PHRASES]: {}
+            [STORAGE_KEY_CUSTOM_PHRASES]: {},
+            [STORAGE_KEY_USER_BUTTONS]: {}
         });
         const buttonStatuses = buttonData[STORAGE_KEY_BUTTON_STATUS];
         const customPhrases = buttonData[STORAGE_KEY_CUSTOM_PHRASES];
+        const userButtons = buttonData[STORAGE_KEY_USER_BUTTONS];
 
         panel.innerHTML = '';
 
@@ -677,6 +756,7 @@ async function renderPanelContent(categoryId, panelElement = null) {
 
         const categoryDefaultButtons = defaultButtonDefinitions.filter(btn => btn.categoryId === categoryId);
         const categorySystemButtons = systemInstructionButtonDefinitions.filter(btn => btn.categoryId === categoryId);
+        const categoryUserButtons = Object.values(userButtons).filter(btn => btn.categoryId === categoryId);
         const categoryCustomPhrases = Object.entries(customPhrases)
             .filter(([id, data]) => data.categoryId === categoryId && !data.isAtomicOverride)
             .reduce((obj, [id, data]) => {
@@ -684,8 +764,28 @@ async function renderPanelContent(categoryId, panelElement = null) {
                 return obj;
             }, {});
 
+        const categoryUserWorkflows = categoryUserButtons.filter(btn => btn.type === 'workflow');
+        const categoryUserPhrases = categoryUserButtons.filter(btn => btn.type === 'phrase');
+        const categoryUserSystem = categoryUserButtons.filter(btn => btn.type === 'system');
+
+        const createUserSection = (title, items) => {
+            if (items.length > 0) {
+                const header = document.createElement('h4');
+                header.textContent = title;
+                panel.appendChild(header);
+                const listContainer = document.createElement('div');
+                listContainer.className = 'phrases-list';
+                displayUserButtonGroup(items, buttonStatuses, listContainer, allAtomicPhrases, customPhrases);
+                panel.appendChild(listContainer);
+                items.forEach(btn => btn.atomicPhraseIds?.forEach(id => usedAtomicIds.add(id)));
+            }
+        };
+
         createSection('Default Buttons', categoryDefaultButtons, displayButtonGroup);
+        createUserSection('Imported Workflows', categoryUserWorkflows);
         createSection('System Instruction Buttons', categorySystemButtons, displayButtonGroup);
+        createUserSection('Imported System Instructions', categoryUserSystem);
+        createUserSection('Imported Phrases', categoryUserPhrases);
         createCustomSection('Custom Phrases', categoryCustomPhrases, displayCustomPhrases);
 
         if (usedAtomicIds.size > 0) {
@@ -942,6 +1042,11 @@ document.addEventListener('DOMContentLoaded', () => {
         addCustomPhraseForm.onsubmit = addCustomPhrase;
     });
 
+    document.getElementById('importPhrasesBtn').addEventListener('click', function() {
+        slidePanelContent.innerHTML = '';
+        openImportPanel();
+    });
+
     document.getElementById('exportPhrasesBtn').addEventListener('click', function() {
         slidePanelContent.innerHTML = '';
         openExportPanel();
@@ -957,6 +1062,101 @@ document.addEventListener('DOMContentLoaded', () => {
         closeSlidePanel();
     });
 });
+
+function openImportPanel() {
+    slidePanelTitle.textContent = 'Import Phrases';
+
+    const importForm = document.createElement('div');
+    importForm.id = 'slidePanelImportForm';
+    importForm.className = 'phrase-form';
+
+    importForm.innerHTML = `
+        <h4>Import Phrases</h4>
+        <div class="form-group">
+            <label for="panelImportFile">Select JSON File:</label>
+            <input type="file" id="panelImportFile" accept=".json" required>
+        </div>
+        <div class="form-group" id="panelImportCategoryGroup" style="display: none;">
+            <label for="panelImportCategorySelect">Target Category:</label>
+            <select id="panelImportCategorySelect">
+                <option value="" disabled selected>-- Select target category --</option>
+            </select>
+        </div>
+        <p class="description">Import custom phrases from a JSON file. Categories and phrases must not already exist.</p>
+        <div class="form-actions">
+            <button type="button" id="panelImportConfirmBtn" disabled>Import</button>
+            <button type="button" id="panelCancelImportBtn">Cancel</button>
+        </div>
+    `;
+
+    slidePanelContent.appendChild(importForm);
+
+    const fileInput = document.getElementById('panelImportFile');
+    const categoryGroup = document.getElementById('panelImportCategoryGroup');
+    const categorySelect = document.getElementById('panelImportCategorySelect');
+    const importBtn = document.getElementById('panelImportConfirmBtn');
+
+    let fileData = null;
+    let importData = null;
+
+    fileInput.addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+            fileData = await file.text();
+            const importManager = new ImportManager();
+            importData = importManager.validateImportData(fileData);
+
+            if (importData.category) {
+                categoryGroup.style.display = 'none';
+                importBtn.disabled = false;
+            } else {
+                categoryGroup.style.display = 'block';
+                populateCategorySelect(categorySelect);
+                categorySelect.addEventListener('change', function() {
+                    importBtn.disabled = !categorySelect.value;
+                });
+                importBtn.disabled = true;
+            }
+        } catch (error) {
+            AlertSystem.error(`File validation failed: ${error.message}`);
+            importBtn.disabled = true;
+            categoryGroup.style.display = 'none';
+        }
+    });
+
+    importBtn.addEventListener('click', async function() {
+        if (!fileData || !importData) {
+            AlertSystem.error('Please select a valid file first');
+            return;
+        }
+
+        try {
+            const importManager = new ImportManager();
+            const targetCategoryId = categorySelect.value || null;
+            const result = await importManager.processImport(fileData, targetCategoryId);
+
+            if (result.success) {
+                if (importData.category) {
+                    AlertSystem.success(`Successfully imported category "${result.categoryName}" with ${result.phrasesCount} phrases`);
+                } else {
+                    AlertSystem.success(`Successfully imported ${result.phrasesCount} phrases`);
+                }
+                closeSlidePanel();
+                createTabsAndPanels();
+            }
+        } catch (error) {
+            AlertSystem.error(`Import failed: ${error.message}`);
+        }
+    });
+
+    document.getElementById('panelCancelImportBtn').addEventListener('click', closeSlidePanel);
+
+    slidePanel.classList.add('active');
+    panelOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
 
 function populateCategorySelect(selectEl) {
     if (!selectEl) {

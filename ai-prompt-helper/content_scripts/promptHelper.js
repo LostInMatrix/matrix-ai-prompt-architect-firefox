@@ -55,10 +55,11 @@ console.log('AI Prompt Helper content script INJECTED (waiting for render comman
 
 function loadPhrases() {
     if (window.aiPromptHelper && window.aiPromptHelper.phrases) {
-        return StorageAPI.get(['promptHelperButtonStatus', 'promptHelperCustomPhrases']).then(result => {
+        return StorageAPI.get(['promptHelperButtonStatus', 'promptHelperCustomPhrases', 'promptHelperUserButtons']).then(result => {
             atomicPhrases = {};
             const defaultPhrases = window.aiPromptHelper.phrases.atomicPhrases || {};
             const buttonStatuses = result.promptHelperButtonStatus || {};
+            const userButtons = result.promptHelperUserButtons || {};
 
             Object.keys(defaultPhrases).forEach(id => {
                 atomicPhrases[id] = defaultPhrases[id];
@@ -84,6 +85,16 @@ function loadPhrases() {
                     };
                 });
 
+            const importedButtons = Object.values(userButtons)
+                .filter(btn => buttonStatuses[btn.label] !== false)
+                .map(btn => ({
+                    label: btn.label,
+                    type: btn.type,
+                    atomicPhraseIds: btn.atomicPhraseIds,
+                    categoryId: btn.categoryId,
+                    isUserButton: true
+                }));
+
             buttonDefinitions = [];
             if (window.aiPromptHelper.phrases.buttonDefinitions) {
                 buttonDefinitions = (window.aiPromptHelper.phrases.buttonDefinitions || []).filter(btn => {
@@ -91,7 +102,7 @@ function loadPhrases() {
                 });
             }
 
-            buttonDefinitions = buttonDefinitions.concat(customButtons);
+            buttonDefinitions = buttonDefinitions.concat(customButtons).concat(importedButtons);
 
             return buttonDefinitions;
         }).catch(error => {
