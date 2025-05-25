@@ -80,4 +80,18 @@ window.aiPromptHelper._phraseModules.writing = {
     sysGenreRomance: "Craft romance with authentic emotional development, meaningful obstacles, and satisfying relationship evolution.",
     sysGenreHorror: "Build horror through escalating tension, atmospheric elements, and exploration of fundamental fears.",
     sysDialogueFocus: "Create authentic dialogue that reveals character, advances plot, and maintains distinct voices for each speaker.",
+
+    // Writing Discovery & Collaboration
+    discussStoryPlan: "Outline your understanding of the story goal and propose a high-level approach. Do not write story content until we agree on the plan.",
+    askMissingStoryInfo: "What story information, context, or existing material are you missing to provide complete and accurate writing assistance?",
+    askClarifyStoryGoals: "Ask essential clarifying questions about the story concept, genre, scope, and specific writing help needed.",
+    identifyStoryScope: "Clarify the scope: Is this a short story, novel, chapter, scene, or specific story element you need help with?",
+    assessWritingStage: "Determine what stage you're at: initial concept, partial draft, revision, or specific problem-solving?",
+    clarifyWritingStyle: "What tone, genre conventions, and audience expectations should guide this story?",
+
+    // Writing Continuity & Reports
+    generateStoryReport: "Generate an exhaustive and meticulous report of our writing discussion up to this point. Include the story concept, genre, character decisions, plot structure, world-building elements, writing style choices, content created, outstanding creative questions, and current writing objective. This report should serve as a self-contained context document suitable for resuming the writing project from scratch.",
+    storyReportInterpretation: "This is a WRITING STATUS REPORT documenting creative decisions and completed story work, not a new story requirements document. When you see 'writing phase pending,' this means continuing with established story elements, not recreating the foundation.",
+    storyReconciliationGuidance: "When report content conflicts with provided story files or drafts, treat the actual written content as ground truth. The report may reflect an earlier creative state or use imprecise status language.",
+    storyResumptionContext: "Treat this as a CREATIVE HANDOFF document showing accomplished story work and the immediate next writing step, not a project plan for future work.",
 }

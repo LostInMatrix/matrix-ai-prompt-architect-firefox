@@ -8,7 +8,7 @@ const SCRIPT_FILES = [
     "data/phrases/critic.js",
     "data/phrases/coding.js",
     "data/phrases/adaptive.js",
-    "data/phrases/devin.js",
+    "data/phrases/engineering.js",
     "data/phrases/writing.js",
     "lib/phrases.js",
     "content_scripts/promptHelper.js"

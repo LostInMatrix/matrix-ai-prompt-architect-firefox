@@ -40,7 +40,7 @@
         "data/phrases/adaptive.js",
         "data/phrases/critic.js",
         "data/phrases/writing.js",
-        "data/phrases/devin.js",
+        "data/phrases/engineering.js",
         "lib/phrases.js",
         "content_scripts/promptHelper.js",
         "content_scripts/promptHelper.css",

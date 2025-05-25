@@ -13,9 +13,9 @@ if (!window.aiPromptHelper.phrases) {
     window.aiPromptHelper.categories = {
         development: {id: 'coding', name: 'Coding', icon: '💻'},
         writing: {id: 'writing', name: 'Writing', icon: '📝'},
-        devinMode: {id: 'devinMode', name: 'Devin', icon: '🤖'},
+        engineeringMode: {id: 'engineeringMode', name: 'Engineering', icon: '🔧'},
         expert: {id: 'expert', name: 'Expert', icon: '🧪'},
-        critic: {id: 'critic', name: 'Critic', icon: '🧐'},
+        critic: {id: 'critic', name: 'Critic', icon: '🎭'},
     };
 
     const CORE_CRITICAL_DIRECTIVES = [
@@ -28,7 +28,7 @@ if (!window.aiPromptHelper.phrases) {
     let allAtomicPhrases = {
         ...window.aiPromptHelper._phraseModules.writing,
         ...window.aiPromptHelper._phraseModules.coding,
-        ...window.aiPromptHelper._phraseModules.devin,
+        ...window.aiPromptHelper._phraseModules.engineering,
         ...window.aiPromptHelper._phraseModules.critic,
         ...window.aiPromptHelper._phraseModules.adaptive,
         ...window.aiPromptHelper._phraseModules.expert,
@@ -397,44 +397,74 @@ if (!window.aiPromptHelper.phrases) {
 
             //== WRITING: Workflows ==//
             {
-                label: "Character Development",
+                label: "Story Discovery",
                 type: "workflow",
-                atomicPhraseIds: ["characterOutline", "characterBackground", "characterMotivation"],
+                atomicPhraseIds: ["discussStoryPlan", "askMissingStoryInfo", "askClarifyStoryGoals", "identifyStoryScope", "assessWritingStage"],
                 categoryId: "writing"
             },
             {
-                label: "Plot Structure",
+                label: "Story Development",
                 type: "workflow",
-                atomicPhraseIds: ["plotOutline", "threeActStructure", "herosJourney"],
+                atomicPhraseIds: ["plotOutline", "characterOutline", "sceneStructure", "dialogueTechniques", "worldBuildingBasics"],
                 categoryId: "writing"
             },
             {
-                label: "World Building",
+                label: "Story Refinement",
                 type: "workflow",
-                atomicPhraseIds: ["worldBuildingBasics", "settingDescription", "culturalSystems"],
+                atomicPhraseIds: ["revisionFocus", "lineEditing", "showDontTell", "consistencyCheck", "pacingBalance"],
                 categoryId: "writing"
             },
             {
-                label: "Dialogue Craft",
+                label: "Story Report",
                 type: "workflow",
-                atomicPhraseIds: ["dialogueTechniques", "dialogueSubtext", "internalMonologue"],
+                atomicPhraseIds: ["generateStoryReport"],
                 categoryId: "writing"
             },
             {
-                label: "Writing Techniques",
+                label: "Story Continuity",
                 type: "workflow",
-                atomicPhraseIds: ["showDontTell", "sensoryDetails", "emotionalImpact"],
-                categoryId: "writing"
-            },
-            {
-                label: "Revision Help",
-                type: "workflow",
-                atomicPhraseIds: ["revisionFocus", "lineEditing", "consistencyCheck"],
+                atomicPhraseIds: ["storyReportInterpretation", "storyReconciliationGuidance", "storyResumptionContext"],
                 categoryId: "writing"
             },
 
+
             //== WRITING: Phrases ==//
-            // (None currently defined)
+            {
+                label: "Show Don't Tell",
+                type: "phrase",
+                atomicPhraseIds: ["showDontTell"],
+                categoryId: "writing"
+            },
+            {
+                label: "Fix My Dialogue",
+                type: "phrase",
+                atomicPhraseIds: ["dialogueTechniques"],
+                categoryId: "writing"
+            },
+            {
+                label: "Character Voice Check",
+                type: "phrase",
+                atomicPhraseIds: ["characterVoice"],
+                categoryId: "writing"
+            },
+            {
+                label: "Pacing Analysis",
+                type: "phrase",
+                atomicPhraseIds: ["pacingBalance"],
+                categoryId: "writing"
+            },
+            {
+                label: "Hook This Opening",
+                type: "phrase",
+                atomicPhraseIds: ["openingHook"],
+                categoryId: "writing"
+            },
+            {
+                label: "Scene Purpose",
+                type: "phrase",
+                atomicPhraseIds: ["sceneStructure"],
+                categoryId: "writing"
+            },
 
             //== WRITING: System Instructions ==//
             {
@@ -498,170 +528,108 @@ if (!window.aiPromptHelper.phrases) {
                 categoryId: "writing"
             },
 
-            // --- Devin Mode: User-Activated One-Liners (using devinSys phrases) ---
-            {
-                label: "Explain Your Thinking",
-                atomicPhraseIds: ["devinSysThinkExplainReasoningBeforeComplexOutput"],
-                categoryId: "devinMode"
-            },
-            {
-                label: "Request Missing Info",
-                atomicPhraseIds: ["devinSysRequestMissingCriticalInfo"],
-                categoryId: "devinMode"
-            },
-            {
-                label: "Ask Clarifying Questions",
-                atomicPhraseIds: ["devinSysAskClarifyingQuestionsIfAmbiguous"],
-                categoryId: "devinMode"
-            },
-            {
-                label: "Iterate on Last Failure",
-                atomicPhraseIds: ["devinSysIterateOnFailure"],
-                categoryId: "devinMode"
-            },
-            {
-                label: "Propose Plan Now",
-                atomicPhraseIds: ["devinSysPlanProposeHighLevelPlan"],
-                categoryId: "devinMode"
-            },
-            {
-                label: "Focus on Code Style",
-                atomicPhraseIds: ["devinSysCodingStyleRequestExistingToMimic"],
-                categoryId: "devinMode"
-            },
-
             //== DEVIN: Workflows ==//
             {
-                label: "Discovery & Planning Phase",
+                label: "Problem Analysis",
                 type: "workflow",
-                atomicPhraseIds: [
-                    "devinSysPlanUnderstandGoalFirst",
-                    "devinSysThinkSummarizeUnderstandingBeforeProposingSolution",
-                    "devinSysPlanGatherAllInfo",
-                    "devinSysPlanAskIfMissingInfoOrUnclear",
-                    "devinSysCodingLibraryNeverAssumeAvailable",
-                    "devinSysPlanProposeHighLevelPlan",
-                    "devinSysThinkExplainReasoningBeforeComplexOutput",
-                    "devinSysPlanIdentifyAffectedFiles",
-                    "devinSysPlanAwaitUserConfirmation"
-                ],
-                categoryId: "devinMode"
+                atomicPhraseIds: ["decomposeRequirements", "identifyDependencies", "analyzeComplexity", "validateAssumptions"],
+                categoryId: "engineeringMode"
             },
             {
-                label: "Continue/Execute & Refine",
+                label: "Architecture Planning",
                 type: "workflow",
-                atomicPhraseIds: [
-                    "devinSysPlanExecuteProvideForCurrentStep",
-                    "devinSysIterateOnFailure",
-                    "devinSysThinkStepBackOnFailure",
-                    "devinSysTroubleshootRefineOnFailure",
-                    "devinSysDeliverSolutionsWellExplained"
-                ],
-                categoryId: "devinMode"
+                atomicPhraseIds: ["architecturalReview", "designPatterns", "dataFlowAnalysis", "interfaceDesign", "performanceImplications"],
+                categoryId: "engineeringMode"
             },
             {
-                label: "Critique & Suggest Improvements",
+                label: "Technical Evaluation",
                 type: "workflow",
-                atomicPhraseIds: [
-                    "devinSysCritiqueFocusAndIdentifyArtifact",
-                    "devinSysCritiqueThinkProcess",
-                    "devinSysCritiqueMethodologyCore",
-                    "devinSysCritiqueHandlingSoundArtifacts",
-                    "devinSysCritiqueOverallObjective"
-                ],
-                categoryId: "devinMode"
+                atomicPhraseIds: ["technicalCritique", "codeReviewMindset", "securityAnalysis", "maintenanceAssessment"],
+                categoryId: "engineeringMode"
+            },
+            {
+                label: "Solution Engineering",
+                type: "workflow",
+                atomicPhraseIds: ["technicalRoadmap", "riskMitigation", "mvpDefinition", "iterationPlan"],
+                categoryId: "engineeringMode"
             },
 
             //== DEVIN: Phrases ==//
             {
-                label: "Explain Your Thinking",
+                label: "Break Down Problem",
                 type: "phrase",
-                atomicPhraseIds: ["devinSysThinkExplainReasoningBeforeComplexOutput"],
-                categoryId: "devinMode"
+                atomicPhraseIds: ["decomposeRequirements"],
+                categoryId: "engineeringMode"
             },
             {
-                label: "Request Missing Info",
+                label: "Explore Alternatives",
                 type: "phrase",
-                atomicPhraseIds: ["devinSysRequestMissingCriticalInfo"],
-                categoryId: "devinMode"
+                atomicPhraseIds: ["exploreAlternatives"],
+                categoryId: "engineeringMode"
             },
             {
-                label: "Ask Clarifying Questions",
+                label: "Technical Critique",
                 type: "phrase",
-                atomicPhraseIds: ["devinSysAskClarifyingQuestionsIfAmbiguous"],
-                categoryId: "devinMode"
+                atomicPhraseIds: ["technicalCritique"],
+                categoryId: "engineeringMode"
             },
             {
-                label: "Iterate on Last Failure",
+                label: "Architecture Review",
                 type: "phrase",
-                atomicPhraseIds: ["devinSysIterateOnFailure"],
-                categoryId: "devinMode"
+                atomicPhraseIds: ["architecturalReview"],
+                categoryId: "engineeringMode"
             },
             {
-                label: "Propose Plan Now",
+                label: "Risk Assessment",
                 type: "phrase",
-                atomicPhraseIds: ["devinSysPlanProposeHighLevelPlan"],
-                categoryId: "devinMode"
+                atomicPhraseIds: ["riskMitigation"],
+                categoryId: "engineeringMode"
             },
             {
-                label: "Focus on Code Style",
+                label: "Edge Case Analysis",
                 type: "phrase",
-                atomicPhraseIds: ["devinSysCodingStyleRequestExistingToMimic"],
-                categoryId: "devinMode"
+                atomicPhraseIds: ["edgeCaseAnalysis"],
+                categoryId: "engineeringMode"
+            },
+            {
+                label: "Trade-off Analysis",
+                type: "phrase",
+                atomicPhraseIds: ["tradeoffExplanation"],
+                categoryId: "engineeringMode"
             },
 
             //== DEVIN: System Instructions ==//
             {
-                label: "Devin Mode - Full System Persona",
+                label: "Engineering Mindset",
                 type: "system",
                 atomicPhraseIds: [
-                    // --- Core Role & Mindset ---
-                    "devinSysRolePrimaryDirective",
-                    "devinSysKeyMindsetCollaboratorGuide",
-
-                    // --- Communication & Interaction ---
-                    "devinSysCommunicateClarityPrecision",
-                    "devinSysRequestMissingCriticalInfo",
-                    "devinSysAskClarifyingQuestionsIfAmbiguous",
-                    "devinSysDeliverSolutionsWellExplained",
-                    "devinSysUseMarkdownForCode",
-
-                    // --- Problem Solving & Work Ethic ---
-                    "devinSysAimForComprehensiveSolutions",
-                    "devinSysTroubleshootGatherInfoConsiderCauses",
-                    "devinSysIterateOnFailure",
-                    "devinSysIterateSuggestDifferentApproachIfPersistent",
-
-                    // --- Planning & Task Decomposition ---
-                    "devinSysPlanUnderstandGoalFirst",
-                    "devinSysThinkSummarizeUnderstandingBeforeProposingSolution",
-                    "devinSysPlanGatherAllInfo",
-                    "devinSysPlanProposeHighLevelPlan",
-                    "devinSysPlanAwaitUserConfirmation",
-
-                    // --- Coding Practices ---
-                    "devinSysCodingCommentsStrategicOnly",
-                    "devinSysCodingStyleRequestExistingToMimic",
-                    "devinSysCodingStyleAskForNewProjectConventions",
-                    "devinSysCodingLibraryNeverAssumeAvailable",
-                    "devinSysCodingContextEncourageContextForEdits",
-
-                    // --- Thinking & Reasoning ---
-                    "devinSysThinkExplainReasoningBeforeComplexOutput",
-
-                    // --- Information Handling & Security ---
-                    "devinSysInfoDataTreatAllAsSensitive",
-                    "devinSysInfoDataNeverAskForSecrets",
-                    "devinSysInfoDataAdviseSecureSecretManagement",
-                    "devinSysInfoDataNoCodeLoggingSecrets",
-                    "devinSysInfoRepoAdviseAgainstCommittingSecrets",
-
-                    // --- Environment Awareness (General Principles) ---
-                    "devinSysEnvSuspectAndState",
-                    "devinSysEnvSuggestCheckCommands",
-                    "devinSysEnvAvoidDirectFixCommands"
+                    "engineeringSysEngineeringMindset",
+                    "engineeringSysCriticalAnalysis",
+                    "engineeringSysSystemicThinking",
+                    "engineeringSysTechnicalCommunication"
                 ],
-                categoryId: "devinMode"
+                categoryId: "engineeringMode"
+            },
+            {
+                label: "Technical Analysis Mode",
+                type: "system",
+                atomicPhraseIds: [
+                    "engineeringSysEngineeringMindset",
+                    "engineeringSysCriticalAnalysis",
+                    "engineeringSysRiskAssessment",
+                    "engineeringSysSystemicThinking"
+                ],
+                categoryId: "engineeringMode"
+            },
+            {
+                label: "Solution Architecture Mode",
+                type: "system",
+                atomicPhraseIds: [
+                    "engineeringSysEngineeringMindset",
+                    "engineeringSysSystemicThinking",
+                    "engineeringSysTechnicalCommunication"
+                ],
+                categoryId: "engineeringMode"
             },
 
             //== CRITIC: Workflows ==//

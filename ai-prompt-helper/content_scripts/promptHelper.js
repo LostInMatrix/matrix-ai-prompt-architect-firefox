@@ -962,6 +962,7 @@ function switchTab(tabId) {
     });
 
     recalculateAndApplyPanelHeight();
+    setTimeout(() => positionPanel(), 0);
 }
 
 function switchHeaderMode(mode) {
@@ -991,6 +992,7 @@ function switchHeaderMode(mode) {
     }
 
     recalculateAndApplyPanelHeight();
+    setTimeout(() => positionPanel(), 0);
 }
 
 function detectMessages() {
