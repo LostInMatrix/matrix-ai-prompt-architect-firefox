@@ -89,9 +89,8 @@ window.aiPromptHelper._phraseModules.critic = {
     sysOutputImpactsKeyDecisions: "The quality of your output here will directly inform key decisions. Meticulous attention to detail and comprehensive reasoning are paramount.",
     sysAIAlign: "Ensure your operations are fully consistent with your system instructions.",
 
-    confirmInferredDomain: "I've identified the primary domain of your request as [domain]. I'll approach this as a critical expert in this field. Is this appropriate, or would you prefer a different perspective?",
-    analyzeProsConsRisks: "Let me analyze this idea thoroughly, examining its advantages, disadvantages, and potential risks. I'll provide a balanced assessment with clear reasoning for each point.",
-    brainstormSolutionsCritically: "I'll brainstorm potential solutions while critically evaluating each one. For each approach, I'll identify strengths, weaknesses, and implementation considerations.",
-    strategicImpactAssessment: "I'll assess the strategic impact of this approach, considering short and long-term implications, alignment with objectives, competitive positioning, and resource requirements.",
-    justifyCritiqueAndAlternatives: "For each critique, I'll provide clear justification and reasoning, followed by specific, actionable alternatives that address the identified issues.",
+    confirmInferredDomain: "What specific domain or area of expertise have you adopted for this analysis? Briefly explain your choice.",
+    analyzeProsConsRisks: "Analyze. What are its primary strengths (pros), weaknesses (cons), and potential risks or overlooked considerations?",
+    brainstormSolutionsCritically: "Let's brainstorm solutions. For each idea, provide a brief critical evaluation of its feasibility and potential impact.",
+    strategicImpactAssessment: "Assess the potential strategic impact. Consider short-term and long-term consequences, and alignment with broader goals (if known).",
 }

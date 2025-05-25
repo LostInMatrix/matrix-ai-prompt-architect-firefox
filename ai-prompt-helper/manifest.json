@@ -37,7 +37,6 @@
         "lib/storage.js",
         "data/phrases/expert.js",
         "data/phrases/coding.js",
-        "data/phrases/adaptive.js",
         "data/phrases/critic.js",
         "data/phrases/writing.js",
         "data/phrases/engineering.js",

@@ -7,7 +7,6 @@ const SCRIPT_FILES = [
     "data/phrases/expert.js",
     "data/phrases/critic.js",
     "data/phrases/coding.js",
-    "data/phrases/adaptive.js",
     "data/phrases/engineering.js",
     "data/phrases/writing.js",
     "lib/phrases.js",

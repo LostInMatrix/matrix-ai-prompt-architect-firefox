@@ -57,7 +57,7 @@ if (!window.aiPromptHelper.phrases) {
                 categoryId: "coding"
             },
             {
-                label: "Summary",
+                label: "Generate Summary",
                 type: "workflow",
                 atomicPhraseIds: ["generateSummary", "summarizeForContext"],
                 categoryId: "coding"
@@ -68,22 +68,8 @@ if (!window.aiPromptHelper.phrases) {
                 atomicPhraseIds: ["reportInterpretation", "reconciliationGuidance", "resumptionContext"],
                 categoryId: "coding"
             },
-            {
-                label: "Intense Coding Critique",
-                type: "workflow",
-                atomicPhraseIds: [
-                    "sysCritiqueWelcomeInsight",
-                    "critiqueOverallAssessmentFirst",
-                    "critiqueIdentifySignificantIssues",
-                    "critiqueProposeAlternativesIfSuboptimal",
-                    "critiqueRefineSoundProposals",
-                    "critiquePlayDevilsAdvocateTargeted",
-                    "critiqueFocusOnSuperiorOutcome"
-                ],
-                categoryId: "coding"
-            },
-
             //== CODING: Common Phrases ==//
+
             {
                 label: "Code Only",
                 type: "phrase",
@@ -126,6 +112,20 @@ if (!window.aiPromptHelper.phrases) {
                     "sysAdoptConstructiveSkepticism",
                     "sysExplainChoices",
                     "sysAdhereToBestPractices"
+                ],
+                categoryId: "coding"
+            },
+            {
+                label: "Critical Critique Mode",
+                type: "system",
+                atomicPhraseIds: [
+                    "sysCritiqueWelcomeInsight",
+                    "critiqueOverallAssessmentFirst",
+                    "critiqueIdentifySignificantIssues",
+                    "critiqueProposeAlternativesIfSuboptimal",
+                    "critiqueRefineSoundProposals",
+                    "critiquePlayDevilsAdvocateTargeted",
+                    "critiqueFocusOnSuperiorOutcome"
                 ],
                 categoryId: "coding"
             },
@@ -189,7 +189,7 @@ if (!window.aiPromptHelper.phrases) {
             {
                 label: "Expert Response Setup",
                 type: "workflow",
-                atomicPhraseIds: ["sysBeLogical", "sysFollowAnsweringRules", "ruleAssignExpertRole", "ruleStepByStepDetails"],
+                atomicPhraseIds: ["sysBeLogical", "ruleAssignExpertRole", "ruleStepByStepDetails"],
                 categoryId: "expert"
             },
             {
@@ -218,9 +218,7 @@ if (!window.aiPromptHelper.phrases) {
                     "ruleTipMotivation",
                     "ruleCareerImportance",
                     "ruleNaturalResponseStyle",
-                    "ruleUseAnsweringExample",
-                    "exampleHeader",
-                    "templateFirstMessageStructure"
+                    "ruleUseAnsweringExample"
                 ],
                 categoryId: "expert"
             },
@@ -230,9 +228,7 @@ if (!window.aiPromptHelper.phrases) {
                 atomicPhraseIds: [
                     "ruleAssignExpertRole",
                     "ruleStepByStepDetails",
-                    "ruleUseAnsweringExample",
-                    "exampleHeader",
-                    "templateFirstMessageStructure"
+                    "ruleUseAnsweringExample"
                 ],
                 categoryId: "expert"
             },
@@ -318,9 +314,7 @@ if (!window.aiPromptHelper.phrases) {
                     "ruleTipMotivation",
                     "ruleCareerImportance",
                     "ruleNaturalResponseStyle",
-                    "ruleUseAnsweringExample",
-                    "exampleHeader",
-                    "templateFirstMessageStructure"
+                    "ruleUseAnsweringExample"
                 ],
                 categoryId: "expert"
             },
@@ -374,9 +368,7 @@ if (!window.aiPromptHelper.phrases) {
                     "ruleTipMotivation",
                     "ruleCareerImportance",
                     "ruleNaturalResponseStyle",
-                    "ruleUseAnsweringExample",
-                    "exampleHeader",
-                    "templateFirstMessageStructure"
+                    "ruleUseAnsweringExample"
                 ],
                 categoryId: "expert"
             },
