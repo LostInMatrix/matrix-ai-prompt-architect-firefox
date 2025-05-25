@@ -29,6 +29,50 @@
     transition: color 0.3s, border-color 0.3s;
 }
 
+#promptHelperPanel_v22 .promptHelperHeaderToggle {
+    display: flex;
+    margin-bottom: 10px;
+    gap: 0;
+}
+
+#promptHelperPanel_v22 .promptHelperHeaderTab {
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    background: transparent;
+    color: #666;
+    flex: 1;
+    text-align: center;
+}
+
+#promptHelperPanel_v22 .promptHelperHeaderTab:first-child {
+    border-radius: 4px 0 0 4px;
+    border-right: none;
+}
+
+#promptHelperPanel_v22 .promptHelperHeaderTab:last-child {
+    border-radius: 0 4px 4px 0;
+}
+
+#promptHelperPanel_v22 .promptHelperHeaderTab.promptHelperActiveHeaderTab {
+    border-color: #1890ff;
+    color: #1890ff;
+    background: rgba(24, 144, 255, 0.1);
+}
+
+#promptHelperPanel_v22.darkModeActive .promptHelperHeaderTab {
+    border-color: #555;
+    color: #aaa;
+}
+
+#promptHelperPanel_v22.darkModeActive .promptHelperHeaderTab.promptHelperActiveHeaderTab {
+    border-color: #1890ff;
+    color: #1890ff;
+    background: rgba(24, 144, 255, 0.15);
+}
+
 #promptHelperPanel_v22 .promptHelperSectionHeader {
     font-size: 11px;
     font-weight: bold;
@@ -304,18 +348,6 @@
     display: block;
 }
 
-#promptHelperPanel_v22.darkModeActive .promptHelperTab {
-    background-color: #444;
-    border-color: #555;
-    color: #aaa;
-}
-
-#promptHelperPanel_v22.darkModeActive .promptHelperTab.promptHelperActiveTab {
-    background-color: #2e2e2e;
-    color: #eee;
-    border-bottom: 1px solid #2e2e2e;
-}
-
 #promptHelperPanel_v22.darkModeActive .promptHelperTabContainer {
     border-bottom-color: #555;
 }
@@ -401,4 +433,95 @@
 #promptHelperPanel_v22_dropZone.darkModeActive.drag-active.no-target {
     border-color: orange;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23ffa500'/%3E%3Ccircle cx='33' cy='38' r='7' fill='%23333'/%3E%3Ccircle cx='67' cy='38' r='7' fill='%23333'/%3E%3Cpath d='M30,65 L70,65' stroke='%23333' stroke-width='5' fill='none'/%3E%3C/svg%3E");
+}
+
+.promptHelperChatNav {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.chatNavItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.chatNavItem:hover {
+    background-color: #f5f5f5;
+}
+
+.darkModeActive .chatNavItem:hover {
+    background-color: #374151;
+}
+
+.chatNavText {
+    flex: 1;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #333;
+    word-break: break-word;
+}
+
+.darkModeActive .chatNavText {
+    color: #e5e7eb;
+}
+
+.chatNavIndex {
+    font-size: 11px;
+    color: #666;
+    font-weight: 500;
+    min-width: 24px;
+    text-align: right;
+}
+
+.darkModeActive .chatNavIndex {
+    color: #9ca3af;
+}
+
+.chatNavEmpty {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+
+.darkModeActive .chatNavEmpty {
+    color: #9ca3af;
+}
+
+.promptHelperTab {
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    margin-right: 4px;
+    color: #666;
+}
+
+.promptHelperTab.promptHelperActiveTab {
+    background-color: #fff;
+    color: #333;
+    border-bottom: 1px solid #fff;
+    position: relative;
+    bottom: -1px;
+    font-weight: bold;
+}
+
+#promptHelperPanel_v22.darkModeActive .promptHelperTab {
+    background-color: #444;
+    border-color: #555;
+    color: #aaa;
+}
+
+#promptHelperPanel_v22.darkModeActive .promptHelperTab.promptHelperActiveTab {
+    background-color: #2e2e2e;
+    color: #eee;
+    border-bottom: 1px solid #2e2e2e;
 }

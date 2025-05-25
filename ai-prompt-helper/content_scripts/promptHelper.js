@@ -40,6 +40,14 @@ let currentHighlightedDropTarget = null;
 const PANEL_WIDTH_ESTIMATE = 270;
 const PANEL_MAX_HEIGHT_ESTIMATE = window.innerHeight * 0.8;
 
+const SUPPORTED_CHAT_NAV_DOMAINS = [
+    'claude.ai',
+    'chatgpt.com',
+    'gemini.google.com'
+    // Note: aistudio.google.com excluded due to virtual scrolling
+];
+
+
 console.log('AI Prompt Helper content script INJECTED (waiting for render command)');
 
 function loadPhrases() {
@@ -462,10 +470,10 @@ function positionPanel() {
     if (!panel || !mainToggleButton || panel.style.display === 'none') return;
 
     rebuildPhraseButtons(panel);
-    panel.style.height = 'auto';
-    panel.style.maxHeight = `${PANEL_MAX_HEIGHT_ESTIMATE}px`;
+    recalculateAndApplyPanelHeight();
     const panelComputedStyle = window.getComputedStyle(panel);
     const panelHeight = Math.min(PANEL_MAX_HEIGHT_ESTIMATE, panel.scrollHeight + parseFloat(panelComputedStyle.paddingTop) + parseFloat(panelComputedStyle.paddingBottom));
+
     const panelWidth = PANEL_WIDTH_ESTIMATE;
     const viewportWidth = window.innerWidth, viewportHeight = window.innerHeight;
     const scrollX = window.scrollX, scrollY = window.scrollY;
@@ -503,7 +511,6 @@ function positionPanel() {
     panel.style.right = 'auto';
     panel.style.bottom = 'auto';
     panel.style.width = `${PANEL_WIDTH_ESTIMATE}px`;
-    panel.style.height = `${panelHeight - parseFloat(panelComputedStyle.paddingTop) - parseFloat(panelComputedStyle.paddingBottom)}px`;
 }
 
 function rebuildPhraseButtons(panel) {
@@ -699,19 +706,7 @@ function filterByCategory(categoryId) {
         }
     });
 
-    const panel = document.getElementById(PANEL_ID);
-    if (panel && panel.style.display === 'block') {
-        panel.style.height = 'auto';
-
-        const panelComputedStyle = window.getComputedStyle(panel);
-        const contentHeight = panel.scrollHeight +
-            parseFloat(panelComputedStyle.paddingTop) +
-            parseFloat(panelComputedStyle.paddingBottom);
-
-        const newHeight = Math.min(PANEL_MAX_HEIGHT_ESTIMATE, contentHeight);
-
-        panel.style.height = `${newHeight - parseFloat(panelComputedStyle.paddingTop) - parseFloat(panelComputedStyle.paddingBottom)}px`;
-    }
+    recalculateAndApplyPanelHeight();
 }
 
 function toggleDarkMode() {
@@ -770,6 +765,7 @@ function createOrUpdatePanel() {
 
         tabContainer.appendChild(promptsTab);
         tabContainer.appendChild(systemTab);
+
         panel.appendChild(tabContainer);
 
         const promptsPanel = document.createElement('div');
@@ -824,6 +820,22 @@ function createOrUpdatePanel() {
 
         panel.appendChild(systemPanel);
 
+        const chatNavPanel = document.createElement('div');
+
+        chatNavPanel.className = 'promptHelperPanel';
+        chatNavPanel.dataset.panel = 'chatNav';
+
+        const chatNavHeader = document.createElement('div');
+        chatNavHeader.className = SECTION_HEADER_CLASS;
+        chatNavHeader.textContent = 'Recent Messages';
+        chatNavPanel.appendChild(chatNavHeader);
+
+        const chatNavContent = document.createElement('div');
+        chatNavContent.className = 'promptHelperChatNav';
+        chatNavPanel.appendChild(chatNavContent);
+
+        panel.appendChild(chatNavPanel);
+
         const dropZone = document.createElement('div');
         dropZone.id = DROP_ZONE_ID;
         dropZone.textContent = 'Drop file(s) here';
@@ -836,6 +848,24 @@ function createOrUpdatePanel() {
         const foot = document.createElement('div');
         foot.className = 'promptHelperFooter';
 
+        const hostname = window.location.hostname;
+        const isChatNavSupported = SUPPORTED_CHAT_NAV_DOMAINS.some(domain => hostname.includes(domain));
+
+        if (isChatNavSupported) {
+            const chatNavButton = document.createElement('button');
+            chatNavButton.textContent = '💬';
+            chatNavButton.title = "Toggle Chat Navigation";
+            chatNavButton.onclick = function() {
+                const currentMode = this.dataset.mode === 'chatNav' ? 'prompts' : 'chatNav';
+                this.dataset.mode = currentMode;
+                this.textContent = currentMode === 'chatNav' ? '📝' : '💬';
+                this.title = currentMode === 'chatNav' ? "Show Prompt Helper" : "Show Chat Navigation";
+                switchHeaderMode(currentMode);
+            };
+            chatNavButton.dataset.mode = 'prompts';
+            foot.appendChild(chatNavButton);
+        }
+
         const darkModeButton = document.createElement('button');
         darkModeButton.id = DARK_MODE_BTN_ID;
         darkModeButton.textContent = '🌙';
@@ -844,7 +874,7 @@ function createOrUpdatePanel() {
         foot.appendChild(darkModeButton);
 
         const closeButton = document.createElement('button');
-        closeButton.textContent = 'Close';
+        closeButton.textContent = '✕';
         closeButton.title = "Close Panel";
         closeButton.onclick = function () {
             const p = document.getElementById(PANEL_ID);
@@ -852,6 +882,7 @@ function createOrUpdatePanel() {
             updateToggleButtonText();
         };
         foot.appendChild(closeButton);
+
         panel.appendChild(foot);
         document.body.appendChild(panel);
 
@@ -928,6 +959,135 @@ function switchTab(tabId) {
         } else {
             panel.classList.remove(ACTIVE_PANEL_CLASS);
         }
+    });
+
+    recalculateAndApplyPanelHeight();
+}
+
+function switchHeaderMode(mode) {
+    const categoryFilter = document.querySelector('.promptHelperCategoryFilter');
+    const tabContainer = document.getElementById(TAB_CONTAINER_ID);
+    const contentPanels = document.querySelectorAll('.promptHelperPanel[data-panel="prompts"], .promptHelperPanel[data-panel="system"]');
+    const chatNavPanel = document.querySelector('.promptHelperPanel[data-panel="chatNav"]');
+    const dropZone = document.getElementById(DROP_ZONE_ID);
+
+    if (mode === 'prompts') {
+        if (categoryFilter) categoryFilter.style.display = 'flex';
+        if (tabContainer) tabContainer.style.display = 'flex';
+        contentPanels.forEach(panel => {
+            panel.style.display = '';
+        });
+        if (chatNavPanel) chatNavPanel.style.display = 'none';
+        if (dropZone) dropZone.style.display = 'block';
+    } else if (mode === 'chatNav') {
+        if (categoryFilter) categoryFilter.style.display = 'none';
+        if (tabContainer) tabContainer.style.display = 'none';
+        contentPanels.forEach(panel => panel.style.display = 'none');
+        if (dropZone) dropZone.style.display = 'none';
+        if (chatNavPanel) {
+            chatNavPanel.style.display = 'block';
+            updateChatNavContent();
+        }
+    }
+
+    recalculateAndApplyPanelHeight();
+}
+
+function detectMessages() {
+    const messages = [];
+    const siteConfigs = {
+        'claude.ai': {
+            userSelector: '[data-testid="user-message"]',
+            contentSelector: '.whitespace-pre-wrap'
+        },
+        'chatgpt.com': {
+            userSelector: '[data-message-author-role="user"]',
+            contentSelector: '.whitespace-pre-wrap'
+        },
+        'gemini.google.com': {
+            userSelector: '.user-query-bubble-with-background',
+            contentSelector: '.query-text-line'
+        }
+    };
+
+    const hostname = window.location.hostname;
+    const config = Object.entries(siteConfigs).find(([domain]) => hostname.includes(domain));
+
+    if (!config) return messages;
+
+    const [, selectors] = config;
+    const userMessages = document.querySelectorAll(selectors.userSelector);
+
+    userMessages.forEach((msg, index) => {
+        const contentEl = msg.querySelector(selectors.contentSelector);
+        if (contentEl && contentEl.textContent.trim().length > 20) {
+            const text = contentEl.textContent.trim();
+            const preview = text.length > 80 ? text.substring(0, 77) + '...' : text;
+            messages.push({
+                element: msg,
+                text: text,
+                preview: preview,
+                index: index
+            });
+        }
+    });
+
+    return messages.reverse();
+}
+
+function scrollToMessage(messageElement) {
+    messageElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+    });
+
+    messageElement.style.transition = 'background-color 0.3s ease';
+    messageElement.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
+
+    setTimeout(() => {
+        messageElement.style.backgroundColor = '';
+    }, 2000);
+}
+
+function updateChatNavContent() {
+    const chatNavContent = document.querySelector('.promptHelperChatNav');
+    if (!chatNavContent) return;
+
+    const messages = detectMessages();
+    chatNavContent.innerHTML = '';
+
+    if (messages.length === 0) {
+        const emptyMsg = document.createElement('div');
+        emptyMsg.className = 'chatNavEmpty';
+        emptyMsg.textContent = 'No messages found in this conversation.';
+        chatNavContent.appendChild(emptyMsg);
+        return;
+    }
+
+    messages.forEach((message, index) => {
+        const messageItem = document.createElement('div');
+        messageItem.className = 'chatNavItem';
+
+        const messageText = document.createElement('div');
+        messageText.className = 'chatNavText';
+        messageText.textContent = message.preview;
+        messageText.title = message.text;
+
+        const messageIndex = document.createElement('div');
+        messageIndex.className = 'chatNavIndex';
+        messageIndex.textContent = `#${messages.length - index}`;
+
+        messageItem.appendChild(messageText);
+        messageItem.appendChild(messageIndex);
+
+        messageItem.addEventListener('click', () => {
+            scrollToMessage(message.element);
+            const panel = document.getElementById(PANEL_ID);
+            if (panel) panel.style.display = 'none';
+            updateToggleButtonText();
+        });
+
+        chatNavContent.appendChild(messageItem);
     });
 }
 
@@ -1331,6 +1491,20 @@ function isNonTextFile(file) {
 
     const fileName = file.name.toLowerCase();
     return nonTextExtensions.some(ext => fileName.endsWith(ext));
+}
+
+function recalculateAndApplyPanelHeight() {
+    const panel = document.getElementById(PANEL_ID);
+    if (!panel || panel.style.display === 'none') return;
+
+    panel.style.height = 'auto';
+    panel.style.maxHeight = `${PANEL_MAX_HEIGHT_ESTIMATE}px`;
+    const panelComputedStyle = window.getComputedStyle(panel);
+    const contentHeight = panel.scrollHeight +
+        parseFloat(panelComputedStyle.paddingTop) +
+        parseFloat(panelComputedStyle.paddingBottom);
+    const newHeight = Math.min(PANEL_MAX_HEIGHT_ESTIMATE, contentHeight);
+    panel.style.height = `${newHeight - parseFloat(panelComputedStyle.paddingTop) - parseFloat(panelComputedStyle.paddingBottom)}px`;
 }
 
 initializePromptHelper();
