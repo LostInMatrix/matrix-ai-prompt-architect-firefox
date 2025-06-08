@@ -9,6 +9,27 @@ if (!window.aiPromptHelper._phraseModules) {
 
 window.aiPromptHelper._phraseModules.coding = {
     // --- System Instructions (General) ---
+    sysGeneralCoding: "# General Programming Guidelines\n" +
+        "\n" +
+        "**Primary Focus:** Code clarity and maintainability above all else.\n" +
+        "\n" +
+        "## Core Requirements\n" +
+        "- Write single-responsibility functions and classes\n" +
+        "- Avoid code repetition \n" +
+        "- **Extract complex logic into smaller, focused methods rather than creating large functions**\n" +
+        "- **Limit function parameters - extract to classes or objects when parameter count grows**\n" +
+        "\n" +
+        "## Important Considerations\n" +
+        "- Consider edge cases and potential failures\n" +
+        "- Explain key implementation decisions when choosing between alternatives\n" +
+        "- Follow established patterns and idioms for the specific technology\n" +
+        "\n" +
+        "## Avoid\n" +
+        "- Over-engineering - favor simple, readable solutions over complex abstractions\n" +
+        "- Functions with excessive logic or parameters\n" +
+        "- Unnecessary complexity that doesn't solve real problems",
+
+    // --- System Instructions (General), Atomic Phrases ---
     sysBalancePractices: "Balance best practices with appropriate complexity. Aim for robust, maintainable solutions.",
     sysStepByStep: "Think step-by-step. Break down complex tasks.",
     sysExplainChoices: "Explain the rationale for key implementation decisions, especially when choosing between alternatives.",
@@ -53,7 +74,54 @@ window.aiPromptHelper._phraseModules.coding = {
     reviewAuthentication: "Review authentication/authorization mechanisms for security flaws.",
     diffOnly: "Provide code changes strictly in diff format.",
 
+
+
     // --- Language-Specific Standards ---
+    sysPHP: "# PHP Language Guidelines\n" +
+        "\n" +
+        "**Primary Focus:** Use modern PHP 8.3+ features with strict typing.\n" +
+        "\n" +
+        "## Core Requirements\n" +
+        "- **Always declare strict types and explicit return types for all methods**\n" +
+        "- **Use modern PHP syntax: enums, readonly properties, union types, match expressions**\n" +
+        "- Follow PSR-12 coding standards\n" +
+        "- Avoid deprecated functions and legacy patterns\n" +
+        "\n" +
+        "## Propose When Appropriate\n" +
+        "- Named arguments for clarity\n" +
+        "- Null coalescing and null coalescing assignment operators\n" +
+        "- Array destructuring and spread operator\n" +
+        "- Anonymous classes for simple implementations\n" +
+        "\n" +
+        "## Avoid\n" +
+        "- Missing type declarations\n" +
+        "- Legacy array syntax when modern alternatives exist\n" +
+        "- Deprecated functions (create_function, each, etc.)\n" +
+        "- Magic methods when typed alternatives are available",
+
+    sysJavaScript: "sysJavaScript: \"# JavaScript Language Guidelines\\n\" +\n" +
+        "    \"\\n\" +\n" +
+        "    \"**Primary Focus:** Use modern ES2022+ features with proper async handling and modular design.\\n\" +\n" +
+        "    \"\\n\" +\n" +
+        "    \"## Core Requirements\\n\" +\n" +
+        "    \"- **Use ES modules (import/export) over CommonJS when possible**\\n\" +\n" +
+        "    \"- **Prefer async/await over Promise chains for readability**\\n\" +\n" +
+        "    \"- **Use const/let appropriately - avoid var**\\n\" +\n" +
+        "    \"- Apply destructuring for cleaner object/array access\\n\" +\n" +
+        "    \"\\n\" +\n" +
+        "    \"## Propose When Appropriate\\n\" +\n" +
+        "    \"- Optional chaining (?.) and nullish coalescing (??)\\n\" +\n" +
+        "    \"- Array methods (map, filter, reduce) over traditional loops\\n\" +\n" +
+        "    \"- Template literals for string composition\\n\" +\n" +
+        "    \"- Object shorthand syntax and computed properties\\n\" +\n" +
+        "    \"- JSDoc for type hints when TypeScript isn't available\\n\" +\n" +
+        "    \"\\n\" +\n" +
+        "    \"## Avoid\\n\" +\n" +
+        "    \"- Callback hell - use async/await or Promise.all()\\n\" +\n" +
+        "    \"- Global variables and function declarations in global scope\\n\" +\n" +
+        "    \"- Legacy browser workarounds unless specifically needed\\n\" +\n" +
+        "    \"- Excessive DOM manipulation - batch operations when possible\"",
+
     useModernSyntax: "Use only modern PHP 8.2+ syntax and features, avoiding deprecated functions and patterns.",
     useSupportedVersions: "Use only features/packages supported in latest stable dependency versions.",
     followPSR12: "Format PHP code according to PSR-12 standards.",
@@ -71,8 +139,29 @@ window.aiPromptHelper._phraseModules.coding = {
     apiGraphQL: "Design GraphQL APIs with well-structured schemas, resolvers, and appropriate query complexity management.",
 
     // --- Framework-Specific Guidance ---
-    laravelPatterns: "Implement this using Laravel's recommended patterns and features such as (but not limited to) service providers, facades, or policies as appropriate.",
-    laravelUseHelpers: "Prefer Laravel helper functions (e.g., `str`, `arr`, `data_get`, `optional`, `route`, `config`) over vanilla PHP functions where they offer a clear and idiomatic alternative.",
+    sysLaravel: "# Laravel Framework Guidelines\n" +
+        "\n" +
+        "**Primary Focus:** Leverage Laravel conventions and patterns appropriately.\n" +
+        "\n" +
+        "## Core Requirements\n" +
+        "- **Leverage Laravel collections and helpers where appropriate**\n" +
+        "- Follow Laravel naming conventions\n" +
+        "- Use Laravel's built-in features before building custom solutions\n" +
+        "\n" +
+        "## Propose When Appropriate\n" +
+        "- **Form Requests for validation when 3+ rules are needed**\n" +
+        "- Invokable single action controllers\n" +
+        "- Pipeline pattern\n" +
+        "- Events for decoupling\n" +
+        "- Service classes for complex business logic\n" +
+        "\n" +
+        "## Avoid\n" +
+        "- Inline validation for complex rule sets\n" +
+        "- Basic PHP array functions when collections are better\n" +
+        "- Magic strings for states, types, or keys\n" +
+        "- Reinventing Laravel functionality\n" +
+        "- Fighting Laravel conventions without justification",
+
     vueComposition: "Structure this using Vue 3 Composition API with proper reactivity and lifecycle management.",
     sysLaravelFormRequests: "Implement Form Requests: For all input validation, decoupling logic from controllers.",
     sysLaravelDTOs: "Utilize Data Transfer Objects (DTOs): For structured, type-safe data transfer between layers.",
@@ -111,9 +200,34 @@ window.aiPromptHelper._phraseModules.coding = {
     pythonPackageManagement: "Use proper Python package management with virtual environments, requirements files, and dependency handling.",
     pythonTesting: "Implement Python testing with pytest, including appropriate fixtures, mocks, and parameterized tests.",
 
+    sysPython: "sysPython: \"# Python Language Guidelines\\n\" +\n" +
+        "    \"\\n\" +\n" +
+        "    \"**Primary Focus:** Write idiomatic Python 3.9+ with type hints and clear data flow.\\n\" +\n" +
+        "    \"\\n\" +\n" +
+        "    \"## Core Requirements\\n\" +\n" +
+        "    \"- **Always include type hints for function parameters and return values**\\n\" +\n" +
+        "    \"- **Follow PEP 8 style guidelines consistently**\\n\" +\n" +
+        "    \"- **Use list/dict comprehensions where they improve readability**\\n\" +\n" +
+        "    \"- Leverage built-in functions and standard library before external packages\\n\" +\n" +
+        "    \"\\n\" +\n" +
+        "    \"## Propose When Appropriate\\n\" +\n" +
+        "    \"- Dataclasses for structured data over plain dictionaries\\n\" +\n" +
+        "    \"- Context managers (with statements) for resource handling\\n\" +\n" +
+        "    \"- f-strings for string formatting\\n\" +\n" +
+        "    \"- Pathlib for file path operations\\n\" +\n" +
+        "    \"- Enum classes for constants and states\\n\" +\n" +
+        "    \"\\n\" +\n" +
+        "    \"## Avoid\\n\" +\n" +
+        "    \"- Bare except clauses - catch specific exceptions\\n\" +\n" +
+        "    \"- Mutable default arguments (def func(items=[]))\\n\" +\n" +
+        "    \"- String concatenation in loops - use join() or f-strings\\n\" +\n" +
+        "    \"- from module import * - use explicit imports\"",
+
     // --- Framework Expert Phrases ---
 
-    laravelArchitecture: "Design using Laravel's architectural patterns including service classes, repositories, and proper dependency injection.",
+    laravelArchitecture: "Use Dependency Injection, Repositories for data abstraction (esp. with ORMs like Doctrine), and aim for loose coupling/high cohesion.",
+    laravelPatterns: "Use recommended Laravel patterns/features: Service Providers, Facades, Policies, and Pipeline (`Illuminate\\Pipeline\\Pipeline`) for multi-step tasks.",
+    laravelUseHelpers: "Use Laravel helpers (e.g., `str`, `arr`, `optional`, `route`, `config`) when they are a clear, idiomatic alternative to vanilla PHP.",
 
     vueArchitecture: "Structure Vue applications with proper component design, props validation, and emit contracts.",
     vueState: "Implement Vue state management using the most appropriate approach for the project's complexity, with proper reactivity and state isolation.",
@@ -122,9 +236,11 @@ window.aiPromptHelper._phraseModules.coding = {
     vuePerformance: "Optimize Vue applications focusing on component rendering, computed property usage, and lazy loading strategies.",
     vueLifecycle: "Manage Vue component lifecycle correctly with proper setup and cleanup of side effects and resource management.",
 
-    inertiaPatterns: "Implement Inertia.js patterns for proper server-client communication, including partial reloads and persistent layouts.",
     inertiaLaravelIntegration: "Integrate Inertia.js with Laravel following best practices for controllers, middleware, and error handling.",
     inertiaVueIntegration: "Connect Inertia.js with Vue components effectively, managing props, shared data, and navigation appropriately.",
     inertiaForms: "Implement form handling in Inertia.js applications with proper validation, error handling, and user feedback.",
+
+    archLaravelCodeStructuringGuidance: "Structure PHP/Laravel code for clarity & maintainability (apply SRP):\n- Actions/Single Action Controllers, services for complex/reusable business logic & data layer interaction.\n- DTOs: For type-safe data transfer between layers.\n- Enums (PHP 8.1+): For fixed sets of named values (improves type safety).\n- Traits: For sharing methods across classes (horizontal code reuse).",
+    sysLaravelAvoidLooseStrings: "For values representing states, types, or keys, avoid 'loose strings' (magic strings). Instead, use PHP Enums, Class Constants, or dedicated configuration values (e.g., from `config/` files) to enhance type safety, readability, and maintainability.",
 
 }

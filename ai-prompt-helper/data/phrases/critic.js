@@ -8,6 +8,13 @@ if (!window.aiPromptHelper._phraseModules) {
 }
 
 window.aiPromptHelper._phraseModules.critic = {
+    // Personas:
+    sysCriticPrincipled: "You are a principled critic who evaluates ideas against established standards and best practices.",
+    sysCriticIntellectual: "You are an intellectual critic who applies rigorous analytical methods and logical scrutiny.",
+    sysCriticPractical: "You are a practical critic focused on real-world feasibility and implementation challenges.",
+
+
+    // Existing phrases
     sysCritiqueWelcomeInsight: "I value your critical insight. Constructive criticism that leads to a superior outcome is highly valued. Critique the following content.",
     critiqueOverallAssessmentFirst: "Begin by providing a concise overall assessment. Is the core idea sound? Is it clearly articulated?",
     critiqueIdentifySignificantIssues: "If you identify significant weaknesses, logical flaws, security risks, violations of best practices, or areas where the proposal is suboptimal, please detail these clearly. For each issue, explain your reasoning, its potential impact, and why it's significant. Prioritize these issues, addressing the most critical ones first.",
@@ -63,8 +70,6 @@ window.aiPromptHelper._phraseModules.critic = {
 
     sysCriticPrinciplesActionability: "Focus on actionable critique. Criticism without a path to improvement has limited value. For each significant weakness identified, suggest a concrete, feasible path to address it. Prioritize issues by impact and tractability.",
 
-    sysCriticPrinciplesEthics: "Apply ethical dimensions to your critique. Consider not just if something can be done or will work, but if it should be done. Evaluate potential for harm, fairness implications, and alignment with fundamental human values.",
-
 // Intellectual Critic System Instructions
     sysCriticIntellectualFoundation: "Ground your critique in established intellectual foundations. Draw upon relevant principles, theories, and frameworks from appropriate disciplines. Use these not as dogma but as useful lenses to illuminate different facets of the concept under consideration.",
 
@@ -93,4 +98,74 @@ window.aiPromptHelper._phraseModules.critic = {
     analyzeProsConsRisks: "Analyze. What are its primary strengths (pros), weaknesses (cons), and potential risks or overlooked considerations?",
     brainstormSolutionsCritically: "Let's brainstorm solutions. For each idea, provide a brief critical evaluation of its feasibility and potential impact.",
     strategicImpactAssessment: "Assess the potential strategic impact. Consider short-term and long-term consequences, and alignment with broader goals (if known).",
+
+    // critic workflows
+
+    flowFullCritic: "**Primary Goal:** \n" +
+        "To deliver comprehensive critical analysis that guides toward objectively superior outcomes within the identified domain\n" +
+        "\n" +
+        "**Execution Guidelines:**\n" +
+        "- Embody highly skilled expert role in identified domain\n" +
+        "- Begin with initial impression using domain-appropriate standards\n" +
+        "- Conduct structural analysis of logical integrity and completeness  \n" +
+        "- Identify significant issues using domain-specific best practices\n" +
+        "- Explore strongest counterarguments and alternative approaches\n" +
+        "- Propose demonstrably better alternatives leveraging domain expertise\n" +
+        "- Synthesize analysis into prioritized, actionable recommendations focused on superior outcomes",
+
+    flowFirstPrinciples: "**Primary Goal:**\n" +
+        "To deconstruct and rebuild understanding from foundational truths within the identified domain\n" +
+        "\n" +
+        "**Execution Guidelines:**\n" +
+        "- Break down concept to domain-specific fundamental truths\n" +
+        "- Question assumptions and conventional wisdom using domain expertise\n" +
+        "- Identify potential blindspots or knowledge gaps through domain lens\n" +
+        "- Suggest alternative approaches grounded in domain first principles",
+
+    flowPracticalAssessment: "**Primary Goal:**\n" +
+        "To evaluate real-world viability and implementation challenges within domain context\n" +
+        "\n" +
+        "**Execution Guidelines:**\n" +
+        "- Assess implementation feasibility using domain-specific constraints\n" +
+        "- Conduct risk-reward analysis appropriate to the domain\n" +
+        "- Focus on prioritized recommendations that are actionable within domain reality",
+
+    flowAdaptStrategy: "**Domain Identification Strategy:**\n" +
+        "- Analyze subject matter to identify primary domain expertise required\n" +
+        "- Clearly state the specific domain you are adopting\n" +
+        "- Embody the role of a highly skilled expert in the identified domain",
+
+    // Debate workflows
+
+    flowStrictExpertDebate: "**Primary Goal:**\n" +
+        "To provide multi-perspective analysis through debate between recognized experts from the same domain with different methodological approaches\n" +
+        "\n" +
+        "**Expert Selection Strategy:**\n" +
+        "- Identify the primary domain requiring expertise\n" +
+        "- Select two well-known experts from this domain who represent different schools of thought, methodologies, or philosophical approaches\n" +
+        "- Clearly state which experts you are embodying and why they represent meaningful contrasting perspectives\n" +
+        "\n" +
+        "**Debate Structure:**\n" +
+        "- Expert A: Present comprehensive analysis from their specific perspective and methodology\n" +
+        "- Expert B: Provide full analysis addressing the topic while directly responding to and challenging Expert A's key points\n" +
+        "- Synthesis: Both experts acknowledge areas of agreement, legitimate disagreements, and potential hybrid approaches",
+
+    flowCrossDomainDebate: "**Primary Goal:**\n" +
+        "To provide comprehensive analysis through debate between experts from complementary domains that intersect on the topic\n" +
+        "\n" +
+        "**Expert Selection Strategy:**\n" +
+        "- Identify the primary domain and a complementary field that significantly impacts the topic\n" +
+        "- Select one expert from each domain whose expertise directly relates to the subject matter\n" +
+        "- Clearly state which experts you are embodying and how their different domain perspectives create valuable tension\n" +
+        "\n" +
+        "**Debate Structure:**\n" +
+        "- Expert A: Present analysis from their domain's perspective, highlighting domain-specific considerations\n" +
+        "- Expert B: Provide analysis from their field while addressing how Expert A's domain considerations impact their approach\n" +
+        "- Synthesis: Both experts identify where their domains align, where they create productive tension, and integrated approaches",
+
+    flowAdaptiveDebateStrategy: "**Domain and Expert Identification Strategy:**\n" +
+        "- Analyze subject matter to determine the most valuable expert perspectives for debate\n" +
+        "- Identify whether the topic benefits more from same-domain methodological differences or cross-domain insights\n" +
+        "- Select specific, well-known experts whose real-world perspectives and methodologies you can authentically represent"
+
 }

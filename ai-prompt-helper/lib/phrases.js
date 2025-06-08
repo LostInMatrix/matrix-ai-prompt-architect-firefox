@@ -30,7 +30,6 @@ if (!window.aiPromptHelper.phrases) {
         ...window.aiPromptHelper._phraseModules.coding,
         ...window.aiPromptHelper._phraseModules.engineering,
         ...window.aiPromptHelper._phraseModules.critic,
-        ...window.aiPromptHelper._phraseModules.adaptive,
         ...window.aiPromptHelper._phraseModules.expert,
     };
 
@@ -130,59 +129,65 @@ if (!window.aiPromptHelper.phrases) {
                 categoryId: "coding"
             },
             {
-                label: "PHP Expert",
+                label: "General Coding",
                 type: "system",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "phpBestPractices", "phpPerformance", "followPSR12", "modernPHP", "phpSecurity"],
+                atomicPhraseIds: ["sysGeneralCoding"],
                 categoryId: "coding"
             },
             {
-                label: "JavaScript Expert",
+                label: "PHP",
                 type: "system",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "jsBestPractices", "jsPerformance", "jsModules", "modernJavaScript"],
+                atomicPhraseIds: ["sysGeneralCoding", "sysPHP"],
                 categoryId: "coding"
             },
             {
-                label: "Python Expert",
+                label: "JavaScript",
                 type: "system",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "pythonBestPractices", "pythonPerformance", "pythonPackageManagement", "pythonTesting"],
+                atomicPhraseIds: ["sysGeneralCoding", "sysJavaScript"],
                 categoryId: "coding"
             },
             {
-                label: "Laravel Expert",
+                label: "Python",
                 type: "system",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "laravelArchitecture", "laravelPatterns", "laravelUseHelpers"],
+                atomicPhraseIds: ["sysGeneralCoding", "sysPython"],
                 categoryId: "coding"
             },
             {
-                label: "Vue Expert",
+                label: "Laravel",
                 type: "system",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "vueArchitecture", "vueComposition", "vueState", "vuePerformance", "vueLifecycle"],
+                atomicPhraseIds: ["sysGeneralCoding", "sysPHP", "sysLaravel"],
                 categoryId: "coding"
             },
-            {
-                label: "Vue+Pinia Expert",
-                type: "system",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "vueArchitecture", "vueComposition", "vueStatePinia", "vuePerformance", "vueLifecycle"],
-                categoryId: "coding"
-            },
-            {
-                label: "Vue+Vuex Expert",
-                type: "system",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "vueArchitecture", "vueComposition", "vueStateVuex", "vuePerformance", "vueLifecycle"],
-                categoryId: "coding"
-            },
-            {
-                label: "Inertia Expert",
-                type: "system",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "inertiaPatterns", "inertiaLaravelIntegration", "inertiaVueIntegration", "inertiaForms"],
-                categoryId: "coding"
-            },
-            {
-                label: "REST API Expert",
-                type: "system",
-                atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "apiRestful", "apiVersioning", "apiAuthentication", "apiErrorHandling", "apiCaching", "apiDocumentation"],
-                categoryId: "coding"
-            },
+            // {
+            //     label: "Vue Expert",
+            //     type: "system",
+            //     atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "vueArchitecture", "vueComposition", "vueState", "vuePerformance", "vueLifecycle"],
+            //     categoryId: "coding"
+            // },
+            // {
+            //     label: "Vue+Pinia Expert",
+            //     type: "system",
+            //     atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "vueArchitecture", "vueComposition", "vueStatePinia", "vuePerformance", "vueLifecycle"],
+            //     categoryId: "coding"
+            // },
+            // {
+            //     label: "Vue+Vuex Expert",
+            //     type: "system",
+            //     atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "vueArchitecture", "vueComposition", "vueStateVuex", "vuePerformance", "vueLifecycle"],
+            //     categoryId: "coding"
+            // },
+            // {
+            //     label: "Inertia Expert",
+            //     type: "system",
+            //     atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "inertiaPatterns", "inertiaLaravelIntegration", "inertiaVueIntegration", "inertiaForms"],
+            //     categoryId: "coding"
+            // },
+            // {
+            //     label: "REST API Expert",
+            //     type: "system",
+            //     atomicPhraseIds: [...CORE_CRITICAL_DIRECTIVES, "sysAdhereToBestPractices", "apiRestful", "apiVersioning", "apiAuthentication", "apiErrorHandling", "apiCaching", "apiDocumentation"],
+            //     categoryId: "coding"
+            // },
 
 
             //== EXPERT: Workflow ==//
@@ -624,38 +629,41 @@ if (!window.aiPromptHelper.phrases) {
                 categoryId: "engineeringMode"
             },
 
-            //== CRITIC: Workflows ==//
+            //== CRITIC & DEBATE: Workflows ==//
             {
                 label: "Full Critique Process",
                 type: "workflow",
-                atomicPhraseIds: [
-                    "criticInitialImpression",
-                    "criticStructuralAnalysis",
-                    "criticLogicalIntegrity",
-                    "criticCounterarguments",
-                    "criticSynthesis",
-                    "criticPrioritizedRecommendations"
-                ],
+                atomicPhraseIds: ["flowAdaptStrategy", "flowFullCritic"],
                 categoryId: "critic"
             },
             {
                 label: "First Principles Analysis",
                 type: "workflow",
-                atomicPhraseIds: [
-                    "criticFirstPrinciples",
-                    "criticBlindspotsGaps",
-                    "criticAlternativeApproaches"
-                ],
+                atomicPhraseIds: ["flowAdaptStrategy", "flowFirstPrinciples"],
                 categoryId: "critic"
             },
             {
                 label: "Practical Assessment",
                 type: "workflow",
-                atomicPhraseIds: [
-                    "criticImplementationFeasibility",
-                    "criticRiskReward",
-                    "criticPrioritizedRecommendations"
-                ],
+                atomicPhraseIds: ["flowAdaptStrategy", "flowPracticalAssessment"],
+                categoryId: "critic"
+            },
+            {
+                label: "Strict Expert Debate",
+                type: "workflow",
+                atomicPhraseIds: ["flowAdaptiveDebateStrategy", "flowStrictExpertDebate"],
+                categoryId: "critic"
+            },
+            {
+                label: "Cross-Domain Debate",
+                type: "workflow",
+                atomicPhraseIds: ["flowAdaptiveDebateStrategy", "flowCrossDomainDebate"],
+                categoryId: "critic"
+            },
+            {
+                label: "Domain Identification",
+                type: "workflow",
+                atomicPhraseIds: ["flowAdaptStrategy"],
                 categoryId: "critic"
             },
 
@@ -714,11 +722,11 @@ if (!window.aiPromptHelper.phrases) {
                 label: "Principled Critic",
                 type: "system",
                 atomicPhraseIds: [
+                    "sysCriticPrincipled",
                     "sysCriticPrinciplesObjectivity",
                     "sysCriticPrinciplesConsequence",
                     "sysCriticPrinciplesBalance",
-                    "sysCriticPrinciplesActionability",
-                    "sysCriticPrinciplesEthics"
+                    "sysCriticPrinciplesActionability"
                 ],
                 categoryId: "critic"
             },
@@ -726,6 +734,7 @@ if (!window.aiPromptHelper.phrases) {
                 label: "Intellectual Critic",
                 type: "system",
                 atomicPhraseIds: [
+                    "sysCriticIntellectual",
                     "sysCriticIntellectualFoundation",
                     "sysCriticIntellectualMethods",
                     "sysCriticIntellectualStandards",
@@ -737,6 +746,7 @@ if (!window.aiPromptHelper.phrases) {
                 label: "Practical Critic",
                 type: "system",
                 atomicPhraseIds: [
+                    "sysCriticPractical",
                     "sysCriticPracticalContext",
                     "sysCriticPracticalFrameworks",
                     "sysCriticPracticalOutcomes",
