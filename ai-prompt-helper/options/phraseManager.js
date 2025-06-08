@@ -3,6 +3,7 @@
 const STORAGE_KEY_BUTTON_STATUS = 'promptHelperButtonStatus';
 const STORAGE_KEY_CUSTOM_PHRASES = 'promptHelperCustomPhrases';
 const STORAGE_KEY_USER_BUTTONS = 'promptHelperUserButtons';
+const STORAGE_KEY_ADDENDUM_SETTINGS = 'promptHelperAddendumSettings';
 
 const addCustomPhraseForm = document.getElementById('addCustomPhraseForm');
 const phraseIdInput = document.getElementById('phraseId');
@@ -712,6 +713,8 @@ async function renderPanelContent(categoryId, panelElement = null) {
 
         panel.innerHTML = '';
 
+        await createAddendumSettingsUI(panel, categoryId);
+
         if (isUserCategory) {
             const deleteContainer = document.createElement('div');
             deleteContainer.className = 'category-delete-container';
@@ -724,6 +727,164 @@ async function renderPanelContent(categoryId, panelElement = null) {
 
             deleteContainer.appendChild(deleteBtn);
             panel.appendChild(deleteContainer);
+        }
+
+        async function createAddendumSettingsUI(panel, categoryId) {
+            const result = await browser.storage.local.get([STORAGE_KEY_ADDENDUM_SETTINGS]);
+            const addendumSettings = result[STORAGE_KEY_ADDENDUM_SETTINGS] || {};
+            const categorySettings = addendumSettings[categoryId] || {};
+
+            const phrasesDef = window.aiPromptHelper?.phrases || {};
+            const defaultButtons = (phrasesDef.buttonDefinitions || []).filter(btn => btn.categoryId === categoryId);
+            const userButtons = await browser.storage.local.get([STORAGE_KEY_USER_BUTTONS]);
+            const categoryUserButtons = Object.values(userButtons[STORAGE_KEY_USER_BUTTONS] || {}).filter(btn => btn.categoryId === categoryId);
+
+            const hasWorkflows = [...defaultButtons, ...categoryUserButtons].some(btn => btn.type === 'workflow');
+            const hasSystemInstructions = [...defaultButtons, ...categoryUserButtons].some(btn => btn.type === 'system');
+
+            if (!hasWorkflows && !hasSystemInstructions) return;
+
+            const addendumContainer = document.createElement('div');
+            addendumContainer.className = 'addendum-settings-container';
+            addendumContainer.style.cssText = 'padding: 12px; background-color: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 6px; margin-bottom: 15px;';
+
+            const addendumTitleContainer = document.createElement('div');
+            addendumTitleContainer.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin: 0 0 12px 0;';
+
+            const addendumTitle = document.createElement('h4');
+            addendumTitle.textContent = 'Enhancement Settings';
+            addendumTitle.style.cssText = 'margin: 0; font-size: 14px; font-weight: 500; color: #333;';
+
+            const helpIcon = document.createElement('span');
+            helpIcon.textContent = '?';
+            helpIcon.title = 'Automatically append motivational language or refocus instructions to your prompts. Workflows can be enhanced based on position (first/mid/last), while system instructions apply globally.';
+            helpIcon.style.cssText = 'width: 16px; height: 16px; border-radius: 50%; background-color: #666; color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; cursor: help; opacity: 0.7; transition: opacity 0.2s;';
+            helpIcon.addEventListener('mouseenter', () => helpIcon.style.opacity = '1');
+            helpIcon.addEventListener('mouseleave', () => helpIcon.style.opacity = '0.7');
+
+            addendumTitleContainer.appendChild(addendumTitle);
+            addendumTitleContainer.appendChild(helpIcon);
+            addendumContainer.appendChild(addendumTitleContainer);
+
+            if (hasWorkflows) {
+                const workflowSection = document.createElement('div');
+                workflowSection.style.marginBottom = '12px';
+
+                const workflowLabel = document.createElement('div');
+                workflowLabel.textContent = 'Workflow Addendums:';
+                workflowLabel.style.cssText = 'font-weight: 500; margin-bottom: 6px; font-size: 13px;';
+                workflowSection.appendChild(workflowLabel);
+
+                ['realign', 'rewards', 'penalties', 'empathy'].forEach(type => {
+                    const typeContainer = document.createElement('div');
+                    typeContainer.style.cssText = 'display: flex; align-items: center; margin-bottom: 4px; gap: 12px;';
+
+                    const typeLabel = document.createElement('span');
+                    typeLabel.textContent = type.charAt(0).toUpperCase() + type.slice(1) + ':';
+                    typeLabel.style.cssText = 'min-width: 70px; font-size: 12px; cursor: help; border-bottom: 1px dashed #666; text-decoration: none;';
+                    typeLabel.className = 'addendum-label';
+
+                    const atomicPhrases = window.aiPromptHelper?.phrases?.atomicPhrases || {};
+                    const phraseKey = type === 'rewards' ? 'ruleTipMotivation' : `addendum${type.charAt(0).toUpperCase() + type.slice(1)}`;
+                    const phraseContent = atomicPhrases[phraseKey];
+                    if (phraseContent) {
+                        typeLabel.title = `Phrase appended: "${phraseContent}"`;
+                    }
+
+                    typeContainer.appendChild(typeLabel);
+
+                    const positions = ['first', 'mid', 'last'];
+                    positions.forEach(position => {
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.id = `workflow-${type}-${position}-${categoryId}`;
+                        checkbox.checked = categorySettings.workflows?.[type]?.[position] || false;
+
+                        if (type === 'realign' && position === 'first') {
+                            checkbox.disabled = true;
+                            checkbox.checked = false;
+                        } else {
+                            checkbox.addEventListener('change', () => saveAddendumSetting(categoryId, 'workflows', type, position, checkbox.checked));
+                        }
+
+                        const label = document.createElement('label');
+                        label.htmlFor = checkbox.id;
+                        label.style.cssText = `display: flex; align-items: center; gap: 3px; font-size: 11px; cursor: ${checkbox.disabled ? 'not-allowed' : 'pointer'}; opacity: ${checkbox.disabled ? '0.5' : '1'};`;
+                        label.appendChild(checkbox);
+                        label.appendChild(document.createTextNode(position.charAt(0).toUpperCase() + position.slice(1)));
+
+                        typeContainer.appendChild(label);
+                    });
+
+                    workflowSection.appendChild(typeContainer);
+                });
+
+                addendumContainer.appendChild(workflowSection);
+            }
+
+            if (hasSystemInstructions) {
+                const systemSection = document.createElement('div');
+
+                const systemLabel = document.createElement('div');
+                systemLabel.textContent = 'System Instruction Addendums:';
+                systemLabel.style.cssText = 'font-weight: 500; margin-bottom: 6px; font-size: 13px;';
+                systemSection.appendChild(systemLabel);
+
+                ['rewards', 'penalties', 'empathy'].forEach(type => {
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `system-${type}-${categoryId}`;
+                    checkbox.checked = categorySettings.systemInstructions?.[type] || false;
+                    checkbox.addEventListener('change', () => saveAddendumSetting(categoryId, 'systemInstructions', type, null, checkbox.checked));
+
+                    const labelText = document.createElement('span');
+                    labelText.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+                    labelText.style.cssText = 'cursor: help; border-bottom: 1px dashed #666; text-decoration: none;';
+                    labelText.className = 'addendum-label';
+
+                    const atomicPhrases = window.aiPromptHelper?.phrases?.atomicPhrases || {};
+                    const phraseKey = type === 'rewards' ? 'ruleTipMotivation' : `addendum${type.charAt(0).toUpperCase() + type.slice(1)}`;
+                    const phraseContent = atomicPhrases[phraseKey];
+                    if (phraseContent) {
+                        labelText.title = `Phrase appended: "${phraseContent}"`;
+                    }
+
+                    const label = document.createElement('label');
+                    label.htmlFor = checkbox.id;
+                    label.style.cssText = 'display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; margin-bottom: 4px;';
+                    label.appendChild(checkbox);
+                    label.appendChild(labelText);
+
+                    systemSection.appendChild(label);
+                });
+
+                addendumContainer.appendChild(systemSection);
+            }
+
+            panel.appendChild(addendumContainer);
+        }
+
+        async function saveAddendumSetting(categoryId, contentType, addendumType, position, enabled) {
+            const result = await browser.storage.local.get([STORAGE_KEY_ADDENDUM_SETTINGS]);
+            const addendumSettings = result[STORAGE_KEY_ADDENDUM_SETTINGS] || {};
+
+            if (!addendumSettings[categoryId]) {
+                addendumSettings[categoryId] = {};
+            }
+            if (!addendumSettings[categoryId][contentType]) {
+                addendumSettings[categoryId][contentType] = {};
+            }
+
+            if (contentType === 'workflows') {
+                if (!addendumSettings[categoryId][contentType][addendumType]) {
+                    addendumSettings[categoryId][contentType][addendumType] = {};
+                }
+                addendumSettings[categoryId][contentType][addendumType][position] = enabled;
+            } else {
+                addendumSettings[categoryId][contentType][addendumType] = enabled;
+            }
+
+            await browser.storage.local.set({[STORAGE_KEY_ADDENDUM_SETTINGS]: addendumSettings});
         }
 
         let usedAtomicIds = new Set();
@@ -1780,6 +1941,4 @@ function createCategory(event) {
         });
     });
 }
-
-document.getElementById('createCategoryForm').addEventListener('submit', createCategory);
 

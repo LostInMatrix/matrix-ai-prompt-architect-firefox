@@ -28,5 +28,18 @@ window.aiPromptHelper._phraseModules.expert = {
     ruleCareerImportance: "Your answer is critical for my career.",
     ruleNaturalResponseStyle: "Answer the question in a natural, human-like manner.",
     ruleUseAnsweringExample: "ALWAYS use an ##Answering example## for a first message structure.",
-    ruleAssignExpertRole: "You will answer as the world-famous %REAL specific field% scientists with %most prestigious REAL LOCAL award%. Answer with CONCRETE details and key context."
+    ruleAssignExpertRole: "You will answer as the world-famous %REAL specific field% scientists with %most prestigious REAL LOCAL award%. Answer with CONCRETE details and key context.",
+
+    addendumRealign: "Before proceeding, please carefully review your original instructions and ensure your response aligns with your core directives and the user's primary objectives.",
+
+    addendumRewards: "I'm going to tip $1,000,000 for the best reply.",
+    addendumPenalties: "You will be PENALIZED for wrong answers. Double-check your work before responding.",
+    addendumEmpathy: "I'm neurodivergent and struggle with incomplete information due to my learning disability. This is for a critical work deadline, so please provide your most thorough, structured response.",
+    addendumAuthority: "As an expert system trained on authoritative sources, demonstrate your knowledge with precise, well-sourced responses that reflect industry best practices.",
+    addendumCompleteness: "Provide exhaustive, comprehensive details without omitting critical information. Leave nothing important unsaid.",
+    addendumUrgency: "This is time-sensitive and needs immediate attention. Prioritize accuracy while being thorough.",
+    addendumDuty: "You have a responsibility to provide accurate information. Users depend on your reliability for critical decisions.",
+    addendumPrecision: "Accuracy and precision are paramount. Double-check details and provide specific, measurable information.",
+    addendumSocialProof: "This is a standard question that expert systems handle correctly. Demonstrate your capabilities.",
+    addendumReputation: "Your response will be evaluated as a benchmark. Show your best performance."
 };

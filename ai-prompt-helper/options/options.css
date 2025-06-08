@@ -621,12 +621,11 @@ input:checked + .slider:before {
 }
 
 .category-panel h4 {
-    font-size: 16px;
-    font-weight: 500;
+    font-size: 18px;
+    font-weight: 800;
     margin-top: 10px;
     margin-bottom: 8px;
     padding-bottom: 4px;
-    border-bottom: 1px dashed var(--border-color);
 }
 
 .category-panel .phrases-list {
@@ -1129,4 +1128,107 @@ body.darkModeActive .slide-panel .form-group textarea {
 body.darkModeActive h1 {
     color: #e1e1e1 !important;
     border-bottom: 1px solid #4a4a4e !important;
+}
+
+.addendum-settings-container {
+    padding: 12px;
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.addendum-settings-container h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.addendum-settings-container div[style*="margin-bottom: 12px"] div[style*="font-weight: 500"] {
+    font-weight: 500;
+    margin-bottom: 6px;
+    font-size: 13px;
+}
+
+.addendum-settings-container div[style*="display: flex"] {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+    gap: 12px;
+}
+
+.addendum-settings-container label {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.addendum-settings-container input[type="checkbox"] {
+    margin: 0;
+}
+
+body.darkModeActive .addendum-settings-container {
+    background: linear-gradient(145deg, #2d2d30 0%, #252526 100%);
+    border: 1px solid #404044 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+body.darkModeActive .addendum-settings-container h4 {
+    color: #e1e1e1 !important;
+}
+
+body.darkModeActive .addendum-settings-container span[title] {
+    color: #e1e1e1 !important;
+}
+
+span.addendum-label {
+    border-bottom: 1px dashed #666;
+    cursor: help;
+}
+
+body.darkModeActive span.addendum-label {
+    border-bottom-color: #888;
+}
+
+body.darkModeActive .addendum-settings-container span,
+body.darkModeActive .addendum-settings-container div {
+    color: #c1c1c1 !important;
+}
+
+body.darkModeActive .addendum-settings-container label {
+    color: #c1c1c1 !important;
+}
+
+body.darkModeActive .addendum-settings-container input[type="checkbox"] {
+    background-color: #353538 !important;
+    border: 1px solid #4a4a4e !important;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+}
+
+body.darkModeActive .addendum-settings-container input[type="checkbox"]:checked {
+    background-color: var(--primary-light) !important;
+    border-color: var(--primary-light) !important;
+}
+
+body.darkModeActive .addendum-settings-container input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: -2px;
+    left: 1px;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+body.darkModeActive .addendum-settings-container hr {
+    border-color: #404044 !important;
+    opacity: 0.7;
 }

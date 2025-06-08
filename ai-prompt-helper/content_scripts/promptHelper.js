@@ -8,6 +8,7 @@ const DROP_ZONE_ID = PANEL_ID + '_dropZone';
 const DARK_MODE_BTN_ID = PANEL_ID + '_darkModeButton';
 const STORAGE_KEY_BTN_POS = 'promptHelperBtnPos_v1';
 const STORAGE_KEY_DARK_MODE = 'promptHelperDarkMode_v1';
+const STORAGE_KEY_ADDENDUM_SETTINGS = 'promptHelperAddendumSettings';
 const TARGET_ELEMENT_SELECTOR = '#prompt-textarea[contenteditable="true"], textarea, input[type="text"], input[type="search"], input[type="url"], input[type="email"], div[contenteditable="true"]';
 const PANEL_MARGIN = 5;
 const COMBO_BTN_CONTAINER_CLASS = 'promptHelperComboButtons';
@@ -28,6 +29,7 @@ let atomicPhrases = {};
 let buttonDefinitions = [];
 let phraseStatuses = {};
 let customPhrases = {};
+let addendumSettings = {};
 let messageListener = null;
 let focusInListener = null;
 let keyDownListener = null;
@@ -55,11 +57,11 @@ console.log('AI Prompt Helper content script INJECTED (waiting for render comman
 
 function loadPhrases() {
     if (window.aiPromptHelper && window.aiPromptHelper.phrases) {
-        return StorageAPI.get(['promptHelperButtonStatus', 'promptHelperCustomPhrases', 'promptHelperUserButtons']).then(result => {
-            atomicPhrases = {};
+        return StorageAPI.get(['promptHelperButtonStatus', 'promptHelperCustomPhrases', 'promptHelperUserButtons', STORAGE_KEY_ADDENDUM_SETTINGS]).then(result => {
             const defaultPhrases = window.aiPromptHelper.phrases.atomicPhrases || {};
             const buttonStatuses = result.promptHelperButtonStatus || {};
             const userButtons = result.promptHelperUserButtons || {};
+            addendumSettings = result[STORAGE_KEY_ADDENDUM_SETTINGS] || {};
 
             Object.keys(defaultPhrases).forEach(id => {
                 atomicPhrases[id] = defaultPhrases[id];
@@ -617,7 +619,10 @@ function rebuildPhraseButtons(panel) {
             if (phrases.length > 0) {
                 btn.title = `Insert: ${item.label}\n(${item.atomicPhraseIds.join(' + ')})\n\n---\n${phrases.join('\n---\n')}${hotkeyTitleInfo}`;
                 btn.onclick = function () {
-                    phrases.forEach(p => addTextToTarget(p, false));
+                    const allPhrases = [...phrases];
+                    const addendums = getApplicableAddendums(item, index, activeCategoryId);
+                    addendums.forEach(addendum => allPhrases.push(addendum));
+                    allPhrases.forEach(p => addTextToTarget(p, false));
                 };
                 btn.addEventListener('mouseenter', function() {
                     if (lastFocusedTextarea && document.body.contains(lastFocusedTextarea) && lastFocusedTextarea.offsetParent !== null) {
@@ -1139,6 +1144,8 @@ function handleHotkey(event) {
                     });
 
                     if (allFound) {
+                        const addendums = getApplicableAddendums(item, index, activeCategoryId);
+                        addendums.forEach(addendum => phrasesToInsert.push(addendum));
                         phrasesToInsert.forEach(p => addTextToTarget(p, false));
                     } else {
                         alert(`Prompt Helper Hotkey: Failed to execute action for "${item.label}" completely. Some parts missing. Check console.`);
@@ -1427,6 +1434,52 @@ async function renderUIAndAttachListeners() {
             console.log('AI Prompt Helper: UI Rendered.');
         }
     });
+}
+
+function getApplicableAddendums(buttonItem, buttonIndex, categoryId) {
+    const addendums = [];
+    const categorySettings = addendumSettings[categoryId];
+    if (!categorySettings) return addendums;
+
+    const atomicPhrases = window.aiPromptHelper?.phrases?.atomicPhrases || {};
+
+    if (buttonItem.type === 'workflow') {
+        const categoryWorkflows = buttonDefinitions.filter(btn =>
+            btn.categoryId === categoryId && btn.type === 'workflow'
+        );
+        const position = getWorkflowPosition(buttonIndex, categoryWorkflows.length);
+        const workflowSettings = categorySettings.workflows;
+
+        if (workflowSettings) {
+            ['realign', 'rewards', 'penalties', 'empathy'].forEach(type => {
+                if (workflowSettings[type] && workflowSettings[type][position]) {
+                    const phraseKey = type === 'rewards' ? 'ruleTipMotivation' : `addendum${type.charAt(0).toUpperCase() + type.slice(1)}`;
+                    const phrase = atomicPhrases[phraseKey];
+                    if (phrase) addendums.push(phrase);
+                }
+            });
+        }
+    } else if (buttonItem.type === 'system') {
+        const systemSettings = categorySettings.systemInstructions;
+        if (systemSettings) {
+            ['rewards', 'penalties', 'empathy'].forEach(type => {
+                if (systemSettings[type]) {
+                    const phraseKey = type === 'rewards' ? 'ruleTipMotivation' : `addendum${type.charAt(0).toUpperCase() + type.slice(1)}`;
+                    const phrase = atomicPhrases[phraseKey];
+                    if (phrase) addendums.push(phrase);
+                }
+            });
+        }
+    }
+
+    return addendums;
+}
+
+function getWorkflowPosition(workflowIndex, totalWorkflows) {
+    if (totalWorkflows === 1) return 'first';
+    if (workflowIndex === 0) return 'first';
+    if (workflowIndex === totalWorkflows - 1) return 'last';
+    return 'mid';
 }
 
 function initializePromptHelper() {
