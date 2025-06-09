@@ -771,17 +771,51 @@ async function renderPanelContent(categoryId, panelElement = null) {
                 workflowSection.style.marginBottom = '12px';
 
                 const workflowLabel = document.createElement('div');
-                workflowLabel.textContent = 'Workflow Addendums:';
+                workflowLabel.textContent = 'Workflow Enhancement:';
                 workflowLabel.style.cssText = 'font-weight: 500; margin-bottom: 6px; font-size: 13px;';
                 workflowSection.appendChild(workflowLabel);
 
-                ['realign', 'rewards', 'penalties', 'empathy'].forEach(type => {
+                const currentPreset = getWorkflowPreset(categorySettings.workflows || {});
+
+                const presetContainer = document.createElement('div');
+                presetContainer.style.cssText = 'display: flex; gap: 15px; margin-bottom: 8px; flex-wrap: wrap;';
+
+                ['none', 'light', 'standard', 'heavy', 'maximum'].forEach(preset => {
+                    const presetLabel = document.createElement('label');
+                    presetLabel.style.cssText = 'display: flex; align-items: center; gap: 4px; font-size: 12px; cursor: pointer;';
+
+                    const presetRadio = document.createElement('input');
+                    presetRadio.type = 'radio';
+                    presetRadio.name = `workflow-preset-${categoryId}`;
+                    presetRadio.value = preset;
+                    presetRadio.checked = currentPreset === preset;
+                    presetRadio.addEventListener('change', () => applyWorkflowPreset(categoryId, preset));
+
+                    presetLabel.appendChild(presetRadio);
+                    presetLabel.appendChild(document.createTextNode(preset.charAt(0).toUpperCase() + preset.slice(1)));
+                    presetContainer.appendChild(presetLabel);
+                });
+
+                workflowSection.appendChild(presetContainer);
+
+                const advancedToggle = document.createElement('button');
+                advancedToggle.textContent = '⚙️ Advanced';
+                advancedToggle.style.cssText = 'background: none; border: 1px solid #666; border-radius: 3px; padding: 2px 6px; font-size: 11px; cursor: pointer; margin-bottom: 8px;';
+                advancedToggle.onclick = () => toggleAdvancedWorkflow(categoryId);
+                workflowSection.appendChild(advancedToggle);
+
+                const advancedSection = document.createElement('div');
+                advancedSection.id = `workflow-advanced-${categoryId}`;
+                const workflowShouldBeOpen = window.promptHelperAdvancedState?.[categoryId]?.workflow || false;
+                advancedSection.style.display = workflowShouldBeOpen ? 'block' : 'none';
+
+                ['realign', 'rewards', 'penalties', 'empathy', 'authority', 'completeness', 'urgency', 'duty', 'precision', 'socialProof', 'reputation'].forEach(type => {
                     const typeContainer = document.createElement('div');
                     typeContainer.style.cssText = 'display: flex; align-items: center; margin-bottom: 4px; gap: 12px;';
 
                     const typeLabel = document.createElement('span');
                     typeLabel.textContent = type.charAt(0).toUpperCase() + type.slice(1) + ':';
-                    typeLabel.style.cssText = 'min-width: 70px; font-size: 12px; cursor: help; border-bottom: 1px dashed #666; text-decoration: none;';
+                    typeLabel.style.cssText = 'min-width: 80px; font-size: 11px; cursor: help; border-bottom: 1px dashed #666; text-decoration: none;';
                     typeLabel.className = 'addendum-label';
 
                     const atomicPhrases = window.aiPromptHelper?.phrases?.atomicPhrases || {};
@@ -809,16 +843,17 @@ async function renderPanelContent(categoryId, panelElement = null) {
 
                         const label = document.createElement('label');
                         label.htmlFor = checkbox.id;
-                        label.style.cssText = `display: flex; align-items: center; gap: 3px; font-size: 11px; cursor: ${checkbox.disabled ? 'not-allowed' : 'pointer'}; opacity: ${checkbox.disabled ? '0.5' : '1'};`;
+                        label.style.cssText = `display: flex; align-items: center; gap: 2px; font-size: 10px; cursor: ${checkbox.disabled ? 'not-allowed' : 'pointer'}; opacity: ${checkbox.disabled ? '0.5' : '1'};`;
                         label.appendChild(checkbox);
                         label.appendChild(document.createTextNode(position.charAt(0).toUpperCase() + position.slice(1)));
 
                         typeContainer.appendChild(label);
                     });
 
-                    workflowSection.appendChild(typeContainer);
+                    advancedSection.appendChild(typeContainer);
                 });
 
+                workflowSection.appendChild(advancedSection);
                 addendumContainer.appendChild(workflowSection);
             }
 
@@ -826,11 +861,45 @@ async function renderPanelContent(categoryId, panelElement = null) {
                 const systemSection = document.createElement('div');
 
                 const systemLabel = document.createElement('div');
-                systemLabel.textContent = 'System Instruction Addendums:';
+                systemLabel.textContent = 'System Instruction Enhancement:';
                 systemLabel.style.cssText = 'font-weight: 500; margin-bottom: 6px; font-size: 13px;';
                 systemSection.appendChild(systemLabel);
 
-                ['rewards', 'penalties', 'empathy'].forEach(type => {
+                const currentSystemPreset = getSystemPreset(categorySettings.systemInstructions || {});
+
+                const systemPresetContainer = document.createElement('div');
+                systemPresetContainer.style.cssText = 'display: flex; gap: 15px; margin-bottom: 8px; flex-wrap: wrap;';
+
+                ['none', 'light', 'standard', 'heavy', 'maximum'].forEach(preset => {
+                    const presetLabel = document.createElement('label');
+                    presetLabel.style.cssText = 'display: flex; align-items: center; gap: 4px; font-size: 12px; cursor: pointer;';
+
+                    const presetRadio = document.createElement('input');
+                    presetRadio.type = 'radio';
+                    presetRadio.name = `system-preset-${categoryId}`;
+                    presetRadio.value = preset;
+                    presetRadio.checked = currentSystemPreset === preset;
+                    presetRadio.addEventListener('change', () => applySystemPreset(categoryId, preset));
+
+                    presetLabel.appendChild(presetRadio);
+                    presetLabel.appendChild(document.createTextNode(preset.charAt(0).toUpperCase() + preset.slice(1)));
+                    systemPresetContainer.appendChild(presetLabel);
+                });
+
+                systemSection.appendChild(systemPresetContainer);
+
+                const systemAdvancedToggle = document.createElement('button');
+                systemAdvancedToggle.textContent = '⚙️ Advanced';
+                systemAdvancedToggle.style.cssText = 'background: none; border: 1px solid #666; border-radius: 3px; padding: 2px 6px; font-size: 11px; cursor: pointer; margin-bottom: 8px;';
+                systemAdvancedToggle.onclick = () => toggleAdvancedSystem(categoryId);
+                systemSection.appendChild(systemAdvancedToggle);
+
+                const systemAdvancedSection = document.createElement('div');
+                systemAdvancedSection.id = `system-advanced-${categoryId}`;
+                const systemShouldBeOpen = window.promptHelperAdvancedState?.[categoryId]?.system || false;
+                systemAdvancedSection.style.display = systemShouldBeOpen ? 'block' : 'none';
+
+                ['rewards', 'penalties', 'empathy', 'authority', 'completeness', 'urgency', 'duty', 'precision', 'socialProof', 'reputation'].forEach(type => {
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
                     checkbox.id = `system-${type}-${categoryId}`;
@@ -851,13 +920,14 @@ async function renderPanelContent(categoryId, panelElement = null) {
 
                     const label = document.createElement('label');
                     label.htmlFor = checkbox.id;
-                    label.style.cssText = 'display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; margin-bottom: 4px;';
+                    label.style.cssText = 'display: flex; align-items: center; gap: 6px; font-size: 11px; cursor: pointer; margin-bottom: 4px;';
                     label.appendChild(checkbox);
                     label.appendChild(labelText);
 
-                    systemSection.appendChild(label);
+                    systemAdvancedSection.appendChild(label);
                 });
 
+                systemSection.appendChild(systemAdvancedSection);
                 addendumContainer.appendChild(systemSection);
             }
 
@@ -865,6 +935,9 @@ async function renderPanelContent(categoryId, panelElement = null) {
         }
 
         async function saveAddendumSetting(categoryId, contentType, addendumType, position, enabled) {
+            const workflowAdvancedOpen = document.getElementById(`workflow-advanced-${categoryId}`)?.style.display === 'block';
+            const systemAdvancedOpen = document.getElementById(`system-advanced-${categoryId}`)?.style.display === 'block';
+
             const result = await browser.storage.local.get([STORAGE_KEY_ADDENDUM_SETTINGS]);
             const addendumSettings = result[STORAGE_KEY_ADDENDUM_SETTINGS] || {};
 
@@ -885,6 +958,14 @@ async function renderPanelContent(categoryId, panelElement = null) {
             }
 
             await browser.storage.local.set({[STORAGE_KEY_ADDENDUM_SETTINGS]: addendumSettings});
+
+            window.promptHelperAdvancedState = window.promptHelperAdvancedState || {};
+            window.promptHelperAdvancedState[categoryId] = {
+                workflow: workflowAdvancedOpen,
+                system: systemAdvancedOpen
+            };
+
+            renderPanelContent(categoryId);
         }
 
         let usedAtomicIds = new Set();
@@ -1894,6 +1975,138 @@ function deleteCategory(categoryId, categoryName) {
         console.error("Error fetching phrases for category deletion:", err);
         AlertSystem.error(`Error accessing storage: ${err.message}`);
     });
+}
+
+function getWorkflowPreset(workflowSettings) {
+    const hasEmpathy = ['first', 'mid', 'last'].some(pos => workflowSettings.empathy?.[pos]);
+    const hasRewards = ['first', 'mid', 'last'].some(pos => workflowSettings.rewards?.[pos]);
+    const hasPenalties = ['first', 'mid', 'last'].some(pos => workflowSettings.penalties?.[pos]);
+    const hasAuthority = ['first', 'mid', 'last'].some(pos => workflowSettings.authority?.[pos]);
+    const hasRealign = ['mid', 'last'].some(pos => workflowSettings.realign?.[pos]);
+
+    const hasCompleteness = ['first', 'mid', 'last'].some(pos => workflowSettings.completeness?.[pos]);
+    const hasUrgency = ['first', 'mid', 'last'].some(pos => workflowSettings.urgency?.[pos]);
+    const hasDuty = ['first', 'mid', 'last'].some(pos => workflowSettings.duty?.[pos]);
+    const hasPrecision = ['first', 'mid', 'last'].some(pos => workflowSettings.precision?.[pos]);
+    const hasSocialProof = ['first', 'mid', 'last'].some(pos => workflowSettings.socialProof?.[pos]);
+    const hasReputation = ['first', 'mid', 'last'].some(pos => workflowSettings.reputation?.[pos]);
+
+    const activeCount = [hasEmpathy, hasRewards, hasPenalties, hasAuthority, hasRealign, hasCompleteness, hasUrgency, hasDuty, hasPrecision, hasSocialProof, hasReputation].filter(Boolean).length;
+
+    if (activeCount === 0) return 'none';
+    if (activeCount === 2 && hasEmpathy && hasRealign) return 'light';
+    if (activeCount === 3 && hasEmpathy && hasRewards && hasRealign) return 'standard';
+    if (activeCount === 5 && hasEmpathy && hasRewards && hasPenalties && hasAuthority && hasRealign) return 'heavy';
+    if (activeCount === 11) return 'maximum';
+
+    return 'custom';
+}
+
+function getSystemPreset(systemSettings) {
+    const allTypes = ['rewards', 'penalties', 'empathy', 'authority', 'completeness', 'urgency', 'duty', 'precision', 'socialProof', 'reputation'];
+    const activeTypes = allTypes.filter(type => systemSettings[type]);
+
+    if (activeTypes.length === 0) return 'none';
+    if (activeTypes.length === 1 && activeTypes.includes('empathy')) return 'light';
+    if (activeTypes.length === 2 && activeTypes.includes('empathy') && activeTypes.includes('rewards')) return 'standard';
+    if (activeTypes.length === 4 && activeTypes.includes('empathy') && activeTypes.includes('rewards') && activeTypes.includes('penalties') && activeTypes.includes('authority')) return 'heavy';
+    if (activeTypes.length === allTypes.length) return 'maximum';
+    return 'custom';
+}
+
+async function applyWorkflowPreset(categoryId, preset) {
+    const workflowAdvancedOpen = document.getElementById(`workflow-advanced-${categoryId}`)?.style.display === 'block';
+    const systemAdvancedOpen = document.getElementById(`system-advanced-${categoryId}`)?.style.display === 'block';
+
+    const presetMappings = {
+        none: [],
+        light: ['empathy', 'realign'],
+        standard: ['empathy', 'rewards', 'realign'],
+        heavy: ['empathy', 'rewards', 'penalties', 'authority', 'realign'],
+        maximum: ['realign', 'rewards', 'penalties', 'empathy', 'authority', 'completeness', 'urgency', 'duty', 'precision', 'socialProof', 'reputation']
+    };
+
+    const result = await browser.storage.local.get([STORAGE_KEY_ADDENDUM_SETTINGS]);
+    const addendumSettings = result[STORAGE_KEY_ADDENDUM_SETTINGS] || {};
+
+    if (!addendumSettings[categoryId]) addendumSettings[categoryId] = {};
+    addendumSettings[categoryId].workflows = {};
+
+    const activeTypes = presetMappings[preset] || [];
+    const allTypes = ['realign', 'rewards', 'penalties', 'empathy', 'authority', 'completeness', 'urgency', 'duty', 'precision', 'socialProof', 'reputation'];
+
+    allTypes.forEach(type => {
+        const isActive = activeTypes.includes(type);
+        addendumSettings[categoryId].workflows[type] = {};
+
+        ['first', 'mid', 'last'].forEach(position => {
+            if (type === 'realign' && position === 'first') {
+                addendumSettings[categoryId].workflows[type][position] = false;
+            } else {
+                addendumSettings[categoryId].workflows[type][position] = isActive;
+            }
+        });
+    });
+
+    await browser.storage.local.set({[STORAGE_KEY_ADDENDUM_SETTINGS]: addendumSettings});
+
+    window.promptHelperAdvancedState = window.promptHelperAdvancedState || {};
+    window.promptHelperAdvancedState[categoryId] = {
+        workflow: workflowAdvancedOpen,
+        system: systemAdvancedOpen
+    };
+
+    renderPanelContent(categoryId);
+}
+
+async function applySystemPreset(categoryId, preset) {
+    const workflowAdvancedOpen = document.getElementById(`workflow-advanced-${categoryId}`)?.style.display === 'block';
+    const systemAdvancedOpen = document.getElementById(`system-advanced-${categoryId}`)?.style.display === 'block';
+
+    const presetMappings = {
+        none: [],
+        light: ['empathy'],
+        standard: ['empathy', 'rewards'],
+        heavy: ['empathy', 'rewards', 'penalties', 'authority'],
+        maximum: ['rewards', 'penalties', 'empathy', 'authority', 'completeness', 'urgency', 'duty', 'precision', 'socialProof', 'reputation']
+    };
+
+    const result = await browser.storage.local.get([STORAGE_KEY_ADDENDUM_SETTINGS]);
+    const addendumSettings = result[STORAGE_KEY_ADDENDUM_SETTINGS] || {};
+
+    if (!addendumSettings[categoryId]) addendumSettings[categoryId] = {};
+    addendumSettings[categoryId].systemInstructions = {};
+
+    const activeTypes = presetMappings[preset] || [];
+    const allTypes = ['rewards', 'penalties', 'empathy', 'authority', 'completeness', 'urgency', 'duty', 'precision', 'socialProof', 'reputation'];
+
+    allTypes.forEach(type => {
+        addendumSettings[categoryId].systemInstructions[type] = activeTypes.includes(type);
+    });
+
+    await browser.storage.local.set({[STORAGE_KEY_ADDENDUM_SETTINGS]: addendumSettings});
+
+    window.promptHelperAdvancedState = window.promptHelperAdvancedState || {};
+    window.promptHelperAdvancedState[categoryId] = {
+        workflow: workflowAdvancedOpen,
+        system: systemAdvancedOpen
+    };
+
+    renderPanelContent(categoryId);
+}
+
+function toggleAdvancedWorkflow(categoryId) {
+    const advancedSection = document.getElementById(`workflow-advanced-${categoryId}`);
+    if (advancedSection) {
+        advancedSection.style.display = advancedSection.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+function toggleAdvancedSystem(categoryId) {
+    const advancedSection = document.getElementById(`system-advanced-${categoryId}`);
+    if (advancedSection) {
+        advancedSection.style.display = advancedSection.style.display === 'none' ? 'block' : 'none';
+    }
 }
 
 function createCategory(event) {

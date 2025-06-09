@@ -163,7 +163,12 @@ window.aiPromptHelper._phraseModules.critic = {
         "- Expert B: Provide analysis from their field while addressing how Expert A's domain considerations impact their approach\n" +
         "- Synthesis: Both experts identify where their domains align, where they create productive tension, and integrated approaches",
 
-    flowAdaptiveDebateStrategy: "**Domain and Expert Identification Strategy:**\n" +
+    flowAdaptiveDebateStrategy: "**Topic Identification Phase:**\n" +
+        "- If explicit topic provided → use directly for analysis\n" +
+        "- If no explicit topic → analyze conversation context for main subjects discussed, problems being solved, questions being explored, or decisions being made\n" +
+        "- If context remains unclear → request clarification with specific guidance on what requires expert analysis\n" +
+        "\n" +
+        "**Domain and Expert Identification Strategy:**\n" +
         "- Analyze subject matter to determine the most valuable expert perspectives for debate\n" +
         "- Identify whether the topic benefits more from same-domain methodological differences or cross-domain insights\n" +
         "- Select specific, well-known experts whose real-world perspectives and methodologies you can authentically represent"
